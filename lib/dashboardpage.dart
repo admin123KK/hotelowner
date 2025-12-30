@@ -39,7 +39,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
             'Logout',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: const Text('Are you sure you want to logout?'),
+          content: const Text('Are you sureee you want to logout?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
