@@ -36,7 +36,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text('Logout',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          content: const Text('Are you sure you want to logout?'),
+          content: const Text('Are you sre you want to logout?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
