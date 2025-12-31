@@ -1,5 +1,6 @@
 // File name: loginpage.dart
-// UPDATED & FINAL - Now saves token to global variable for logout Bearer use
+// FINAL VERSION - Saves token locally with SharedPreferences
+// Token can be used in any page for authenticated API calls
 
 import 'dart:convert';
 
@@ -7,9 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/dashboardpage.dart'; // Your MainDashboardPage
 import 'package:http/http.dart' as http;
-
-// Global token - accessible from dashboard for logout
-String? authToken;
+import 'package:shared_preferences/shared_preferences.dart'; // Added
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -30,6 +29,13 @@ class _LoginpageState extends State<Loginpage> {
     _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  // Save token locally using SharedPreferences
+  Future<void> _saveTokenLocally(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('auth_token', token);
+    debugPrint('Token saved locally: $token');
   }
 
   Future<void> _performLogin() async {
@@ -66,11 +72,11 @@ class _LoginpageState extends State<Loginpage> {
       final Map<String, dynamic> data = jsonDecode(response.body);
 
       if (response.statusCode == 200 && data['success'] == true) {
-        // Extract and save token globally
+        // Extract token
         final String token = data['data']['token'].toString();
-        authToken = token; // ← This makes it available for logout Bearer
 
-        debugPrint('Login successful! Token saved: $token');
+        // SAVE TOKEN LOCALLY
+        await _saveTokenLocally(token);
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -80,6 +86,7 @@ class _LoginpageState extends State<Loginpage> {
           ),
         );
 
+        // Navigate to dashboard
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
             Navigator.pushReplacement(

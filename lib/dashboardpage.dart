@@ -4,10 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
 import 'package:hotelowner/loginpage.dart';
+import 'package:hotelowner/transctionspage.dart'; // Keep your full page
 import 'package:http/http.dart' as http;
-
-// Global token variable (saved in memory after login)
-String? authToken;
+import 'package:shared_preferences/shared_preferences.dart'; // Added for token
 
 class MainDashboardPage extends StatefulWidget {
   const MainDashboardPage({super.key});
@@ -30,30 +29,26 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   Future<void> _showLogoutConfirmation() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // User must tap button
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            'Logout',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          content: const Text('Are you sureee you want to logout?'),
+          title: const Text('Logout',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          content: const Text('Are you sure you want to logout?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-              },
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
               child: const Text('OK',
                   style: TextStyle(
                       color: Colors.red, fontWeight: FontWeight.bold)),
               onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                _performLogout(); // Proceed with logout
+                Navigator.of(context).pop();
+                _performLogout();
               },
             ),
           ],
@@ -62,44 +57,44 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     );
   }
 
-  // Real Logout with Bearer Token
+  // Real Logout with Bearer Token + Clear SharedPreferences
   Future<void> _performLogout() async {
-    if (authToken == null) {
-      _navigateToLogin();
-      return;
-    }
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('auth_token');
 
     try {
-      final response = await http.post(
-        Uri.parse(ApiConstants.logoutEndPoint),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $authToken',
-        },
-        body: jsonEncode({}),
-      );
-
-      final Map<String, dynamic> data = jsonDecode(response.body);
-
-      if (response.statusCode == 200 &&
-          (data['success'] == true || data['success'] == 'true')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Logout successful!'),
-            backgroundColor: Colors.green,
-            behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
-          ),
+      if (token != null) {
+        final response = await http.post(
+          Uri.parse(ApiConstants.logoutEndPoint),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode({}),
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? 'Logged out from device'),
-            backgroundColor: Colors.orange,
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+
+        final Map<String, dynamic> data = jsonDecode(response.body);
+
+        if (response.statusCode == 200 &&
+            (data['success'] == true || data['success'] == 'true')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Logout successful!'),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              duration: Duration(seconds: 2),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(data['message'] ?? 'Logged out from device'),
+              backgroundColor: Colors.orange,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,20 +105,16 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
         ),
       );
     } finally {
-      authToken = null;
-      _navigateToLogin();
+      await prefs.remove('auth_token'); // Clear token
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Loginpage()),
+          );
+        }
+      });
     }
-  }
-
-  void _navigateToLogin() {
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Loginpage()),
-        );
-      }
-    });
   }
 
   @override
@@ -163,23 +154,23 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 borderRadius:
                     BorderRadius.only(bottomRight: Radius.circular(40)),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 40,
                     backgroundColor: Colors.white,
                     child:
                         Icon(Icons.person, size: 50, color: Color(0xFFB1936B)),
                   ),
-                  const SizedBox(height: 16),
-                  const Text('Hotel Owner',
+                  SizedBox(height: 16),
+                  Text('Hotel Owner',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
-                  const Text('owner@gmail.com',
+                  Text('owner@gmail.com',
                       style: TextStyle(color: Colors.white70, fontSize: 14)),
                 ],
               ),
@@ -220,7 +211,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       onTap: () {
         if (isLogout) {
-          _showLogoutConfirmation(); // Show alert dialog first
+          _showLogoutConfirmation();
         } else if (page != null) {
           _onMenuItemSelected(page);
         }
@@ -229,9 +220,83 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 }
 
-// ===================== DASHBOARD HOME (unchanged) =====================
-class DashboardHome extends StatelessWidget {
+// ===================== DASHBOARD HOME - ONLY RECENT TRANSACTIONS UPDATED =====================
+class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
+
+  @override
+  State<DashboardHome> createState() => _DashboardHomeState();
+}
+
+class _DashboardHomeState extends State<DashboardHome> {
+  List<dynamic> recentTransactions = [];
+  bool isLoadingTransactions = true;
+  String errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchRecentTransactions();
+  }
+
+  Future<void> _fetchRecentTransactions() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('auth_token');
+
+    if (token == null || token.isEmpty) {
+      setState(() {
+        isLoadingTransactions = false;
+        errorMessage = 'Not logged in';
+      });
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.latestPaymentEndPoint),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+        if (jsonData['success'] == true) {
+          final List<dynamic> allTransactions =
+              jsonData['data']['sell_transactions']['paid'] ?? [];
+          setState(() {
+            // Sort by date (newest first) and take latest 5
+            allTransactions.sort((a, b) {
+              String dateA = a['transaction_date'] ?? '';
+              String dateB = b['transaction_date'] ?? '';
+              if (dateA.isEmpty || dateB.isEmpty) return 0;
+              return dateB.compareTo(dateA);
+            });
+            recentTransactions = allTransactions.take(5).toList();
+            isLoadingTransactions = false;
+          });
+        } else {
+          setState(() {
+            errorMessage = jsonData['message'] ?? 'No data';
+            isLoadingTransactions = false;
+          });
+        }
+      } else {
+        setState(() {
+          errorMessage = 'Server error';
+          isLoadingTransactions = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Network error';
+        isLoadingTransactions = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +318,7 @@ class DashboardHome extends StatelessWidget {
                     color: Colors.black87)),
             const SizedBox(height: 30),
 
-            // Reservation Details
+            // Reservation Details (unchanged)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -281,7 +346,7 @@ class DashboardHome extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Available Rooms
+            // Available Rooms (unchanged)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -398,9 +463,37 @@ class DashboardHome extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            _buildTransactionItem('Susant', 'Room 107 • 2 Feb-5 Feb'),
-            _buildTransactionItem('Sanchar', 'Room 25 • 5 Feb-10 Feb'),
-            _buildTransactionItem('David', 'Room 10 • 3 Feb-7 Feb'),
+
+            // UPDATED: Real Recent Transactions (latest 5)
+            isLoadingTransactions
+                ? const Center(child: CircularProgressIndicator())
+                : errorMessage.isNotEmpty
+                    ? Center(
+                        child: Text(errorMessage,
+                            style: const TextStyle(color: Colors.red)))
+                    : recentTransactions.isEmpty
+                        ? const Center(child: Text('No recent transactions'))
+                        : Column(
+                            children: recentTransactions.map((transaction) {
+                              final String customerName =
+                                  transaction['customer_name'] ??
+                                      'Walk-In Customer';
+                              final String invoiceNo =
+                                  transaction['invoice_no'] ?? 'N/A';
+                              final String amount =
+                                  transaction['final_total']?.toString() ??
+                                      '0.00';
+                              final String status =
+                                  (transaction['payment_status'] ?? 'unknown')
+                                      .toString();
+                              // .capitalize();/
+
+                              return _buildTransactionItem(
+                                customerName,
+                                'Inv: $invoiceNo • Rs. $amount • $status',
+                              );
+                            }).toList(),
+                          ),
           ],
         ),
       ),
@@ -483,7 +576,14 @@ class DashboardHome extends StatelessWidget {
   }
 }
 
-// ===================== ROOMS PAGE - WITH RoomListCard =====================
+extension StringExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return "${this[0].toUpperCase()}${substring(1)}";
+  }
+}
+
+// ===================== ROOMS PAGE & OTHERS - EXACT SAME AS BEFORE =====================
 class RoomsPage extends StatelessWidget {
   const RoomsPage({super.key});
 
@@ -648,14 +748,6 @@ class RoomListCard extends StatelessWidget {
       ),
     );
   }
-}
-
-// Placeholders
-class TransactionsPage extends StatelessWidget {
-  const TransactionsPage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: Text('Transactions')));
 }
 
 class StatsPage extends StatelessWidget {
