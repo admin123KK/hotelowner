@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
 import 'package:hotelowner/loginpage.dart';
-import 'package:hotelowner/transctionspage.dart'; // Keep your full page
+import 'package:hotelowner/transctionspage.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart'; // Added for token
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainDashboardPage extends StatefulWidget {
   const MainDashboardPage({super.key});
@@ -18,11 +18,12 @@ class MainDashboardPage extends StatefulWidget {
 class _MainDashboardPageState extends State<MainDashboardPage> {
   Widget _currentPage = const DashboardHome();
 
+  // Navigation fix: Use push instead of setState to keep dashboard alive
   void _onMenuItemSelected(Widget newPage) {
-    setState(() {
-      _currentPage = newPage;
-    });
-    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => newPage),
+    );
   }
 
   // Show confirmation dialog before logout
@@ -36,7 +37,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           title: const Text('Logout',
               style: TextStyle(fontWeight: FontWeight.bold)),
-          content: const Text('Are you sre you want to logout?'),
+          content: const Text('Are you sure you want to logout?'),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
@@ -105,7 +106,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
         ),
       );
     } finally {
-      await prefs.remove('auth_token'); // Clear token
+      await prefs.remove('auth_token');
       Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           Navigator.pushReplacement(
@@ -220,7 +221,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 }
 
-// ===================== DASHBOARD HOME - ONLY RECENT TRANSACTIONS UPDATED =====================
+// ===================== DASHBOARD HOME - REVENUE GRAPH + 15 DAYS SCROLL + NAV FIX =====================
 class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
 
@@ -233,10 +234,16 @@ class _DashboardHomeState extends State<DashboardHome> {
   bool isLoadingTransactions = true;
   String errorMessage = '';
 
+  // Revenue data
+  List<Map<String, dynamic>> revenueData = [];
+  bool isLoadingRevenue = true;
+  String selectedPeriod = 'Last 7 Days';
+
   @override
   void initState() {
     super.initState();
     _fetchRecentTransactions();
+    _fetchRevenueData();
   }
 
   Future<void> _fetchRecentTransactions() async {
@@ -268,7 +275,6 @@ class _DashboardHomeState extends State<DashboardHome> {
           final List<dynamic> allTransactions =
               jsonData['data']['sell_transactions']['paid'] ?? [];
           setState(() {
-            // Sort by date (newest first) and take latest 5
             allTransactions.sort((a, b) {
               String dateA = a['transaction_date'] ?? '';
               String dateB = b['transaction_date'] ?? '';
@@ -295,6 +301,111 @@ class _DashboardHomeState extends State<DashboardHome> {
         errorMessage = 'Network error';
         isLoadingTransactions = false;
       });
+    }
+  }
+
+  Future<void> _fetchRevenueData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('auth_token');
+
+    if (token == null || token.isEmpty) {
+      setState(() {
+        isLoadingRevenue = false;
+      });
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConstants.revenueDayEndPoint),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+        if (jsonData['success'] == true) {
+          final List<dynamic> rawData = jsonData['data'] ?? [];
+
+          Map<String, double> revenueMap = {};
+          for (var item in rawData) {
+            String date = item['date'] ?? '';
+            double revenue =
+                double.tryParse(item['total_revenue']?.toString() ?? '0') ??
+                    0.0;
+            if (date.isNotEmpty) {
+              revenueMap[date] = revenue;
+            }
+          }
+
+          _updateRevenueGraph(revenueMap);
+        } else {
+          setState(() {
+            isLoadingRevenue = false;
+          });
+        }
+      } else {
+        setState(() {
+          isLoadingRevenue = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoadingRevenue = false;
+      });
+    }
+  }
+
+  void _updateRevenueGraph(Map<String, double> revenueMap) {
+    int days = selectedPeriod == 'Last 7 Days' ? 7 : 15;
+
+    List<Map<String, dynamic>> lastDays = [];
+    DateTime today = DateTime.now();
+    for (int i = days - 1; i >= 0; i--) {
+      DateTime date = today.subtract(Duration(days: i));
+      String formattedDate =
+          '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      String displayDate = '${date.day} ${[
+        '',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ][date.month]}';
+
+      double revenue = revenueMap[formattedDate] ?? 0.0;
+
+      lastDays.add({
+        'date': displayDate,
+        'revenue': revenue,
+      });
+    }
+
+    setState(() {
+      revenueData = lastDays;
+      isLoadingRevenue = false;
+    });
+  }
+
+  void _onPeriodChanged(String? newValue) {
+    if (newValue != null && newValue != selectedPeriod) {
+      setState(() {
+        selectedPeriod = newValue;
+        isLoadingRevenue = true;
+      });
+      _fetchRevenueData();
     }
   }
 
@@ -373,29 +484,41 @@ class _DashboardHomeState extends State<DashboardHome> {
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Reservations',
+                const Text('Revenue Summary',
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                      color: const Color(0xFFF5E6D3),
+                      // color: const Color(0xFFF5E6D3),
                       borderRadius: BorderRadius.circular(20)),
-                  child: const Row(children: [
-                    Text('Last 7 Days ', style: TextStyle(fontSize: 14)),
-                    Icon(Icons.arrow_drop_down, size: 18),
-                  ]),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedPeriod,
+                      icon: const Icon(Icons.arrow_drop_down, size: 18),
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black87),
+                      onChanged: _onPeriodChanged,
+                      items: const [
+                        DropdownMenuItem(
+                            value: 'Last 7 Days', child: Text('Last 7 Days')),
+                        DropdownMenuItem(
+                            value: 'Last 15 Days', child: Text('Last 15 Days')),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 0),
 
+            // Revenue Graph - Now horizontally scrollable for 15 days
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -406,49 +529,65 @@ class _DashboardHomeState extends State<DashboardHome> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      _buildLegendItem(const Color(0xFFD4B896), 'Booked'),
-                      const SizedBox(width: 24),
-                      _buildLegendItem(Colors.grey.shade500, 'Canceled'),
+                      _buildLegendItem(const Color(0xFFD4B896), 'Revenue'),
                     ],
                   ),
                   const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildStackedBar(60, 25),
-                      _buildStackedBar(85, 15),
-                      _buildStackedBar(70, 20),
-                      _buildStackedBar(55, 20),
-                      _buildStackedBar(45, 15),
-                      _buildStackedBar(90, 10),
-                      _buildStackedBar(70, 20),
-                    ],
-                  ),
+                  isLoadingRevenue
+                      ? const SizedBox(
+                          height: 150,
+                          child: Center(child: CircularProgressIndicator()))
+                      : SizedBox(
+                          height: 130,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: revenueData.map((dayData) {
+                                double revenue = dayData['revenue'] ?? 0.0;
+                                double maxRevenue = revenueData.isEmpty
+                                    ? 1
+                                    : revenueData
+                                        .map((e) => e['revenue'] as double)
+                                        .reduce((a, b) => a > b ? a : b);
+                                double height = maxRevenue > 0
+                                    ? (revenue / maxRevenue) * 100
+                                    : 0;
+                                height = height.clamp(10.0, 100.0);
+
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 36,
+                                        height: height,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFD4B896),
+                                          borderRadius: BorderRadius.vertical(
+                                              top: Radius.circular(8)),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        dayData['date'],
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      Text('Dec 27',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      Text('1 Jan',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      Text('2 Jan',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      Text('3 Jan',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      Text('4 Jan',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      Text('5 Jan',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                      Text('6 Jan',
-                          style: TextStyle(fontSize: 12, color: Colors.grey)),
-                    ],
-                  ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 10),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -462,9 +601,9 @@ class _DashboardHomeState extends State<DashboardHome> {
                         style: TextStyle(color: Colors.brown))),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 0),
 
-            // UPDATED: Real Recent Transactions (latest 5)
+            // Real Recent Transactions (latest 5)
             isLoadingTransactions
                 ? const Center(child: CircularProgressIndicator())
                 : errorMessage.isNotEmpty
@@ -486,7 +625,6 @@ class _DashboardHomeState extends State<DashboardHome> {
                               final String status =
                                   (transaction['payment_status'] ?? 'unknown')
                                       .toString();
-                              // .capitalize();/
 
                               return _buildTransactionItem(
                                 customerName,
@@ -518,27 +656,6 @@ class _DashboardHomeState extends State<DashboardHome> {
       const SizedBox(width: 8),
       Text(text, style: const TextStyle(fontSize: 14, color: Colors.black87)),
     ]);
-  }
-
-  Widget _buildStackedBar(double bookedHeight, double canceledHeight) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-            width: 36,
-            height: bookedHeight,
-            decoration: const BoxDecoration(
-                color: Color(0xFFD4B896),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8)))),
-        Container(
-            width: 36,
-            height: canceledHeight,
-            decoration: BoxDecoration(
-                color: Colors.grey.shade500,
-                borderRadius:
-                    const BorderRadius.vertical(bottom: Radius.circular(8)))),
-      ],
-    );
   }
 
   Widget _buildTransactionItem(String name, String details) {
@@ -573,13 +690,6 @@ class _DashboardHomeState extends State<DashboardHome> {
         ],
       ),
     );
-  }
-}
-
-extension StringExtension on String {
-  String capitalize() {
-    if (isEmpty) return this;
-    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }
 

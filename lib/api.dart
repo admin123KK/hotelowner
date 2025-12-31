@@ -6,4 +6,5 @@ class ApiConstants {
   static const String loginEndPoint = "$baseUrl/login";
   static const String logoutEndPoint = "$baseUrl/logout";
   static const String latestPaymentEndPoint = "$baseUrl/ongoing-payment";
+  static const String revenueDayEndPoint = "$baseUrl/today-revenue";
 }
