@@ -544,7 +544,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: revenueData.map((dayData) {
-                                double revenue = dayData['revenue'] ?? 0.0;
+                                double revenue = dayData['revnue'] ?? 0.0;
                                 double maxRevenue = revenueData.isEmpty
                                     ? 1
                                     : revenueData
