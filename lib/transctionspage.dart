@@ -256,7 +256,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                           Text(
                                             'Rs. $amount',
                                             style: const TextStyle(
-                                              fontSize: 24,
+                                              fontSize: 22,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black87,
                                             ),
