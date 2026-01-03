@@ -23,7 +23,7 @@ class GetStartpage extends StatelessWidget {
 
               // Main title text
               Text(
-                'We make you feel \nLike Home',
+                'We makwe you feel \nLike Home',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize:

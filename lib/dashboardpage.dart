@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
 import 'package:hotelowner/loginpage.dart';
+import 'package:hotelowner/roompage.dart';
 import 'package:hotelowner/transctionspage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,7 +19,6 @@ class MainDashboardPage extends StatefulWidget {
 class _MainDashboardPageState extends State<MainDashboardPage> {
   Widget _currentPage = const DashboardHome();
 
-  // Navigation fix: Use push instead of setState to keep dashboard alive
   void _onMenuItemSelected(Widget newPage) {
     Navigator.push(
       context,
@@ -26,7 +26,6 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     );
   }
 
-  // Show confirmation dialog before logout
   Future<void> _showLogoutConfirmation() async {
     return showDialog<void>(
       context: context,
@@ -58,7 +57,6 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     );
   }
 
-  // Real Logout with Bearer Token + Clear SharedPreferences
   Future<void> _performLogout() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
@@ -221,7 +219,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 }
 
-// ===================== DASHBOARD HOME - REVENUE GRAPH + 15 DAYS SCROLL + NAV FIX =====================
+// ===================== DASHBOARD HOME - REAL ROOM AVAILABILITY + REVENUE GRAPH =====================
 class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
 
@@ -230,22 +228,91 @@ class DashboardHome extends StatefulWidget {
 }
 
 class _DashboardHomeState extends State<DashboardHome> {
+  // Recent Transactions
   List<dynamic> recentTransactions = [];
   bool isLoadingTransactions = true;
-  String errorMessage = '';
+  String transactionError = '';
 
-  // Revenue data
+  // Revenue Graph
   List<Map<String, dynamic>> revenueData = [];
   bool isLoadingRevenue = true;
   String selectedPeriod = 'Last 7 Days';
+
+  // Room Availability (Today)
+  int totalRooms = 0;
+  int availableRooms = 0;
+  int bookedRooms = 0;
+  int maintenanceRooms = 0;
+  bool isLoadingRooms = true;
 
   @override
   void initState() {
     super.initState();
     _fetchRecentTransactions();
     _fetchRevenueData();
+    _fetchRoomAvailability(); // Today's data
   }
 
+  // Fetch Today's Room Summary
+  Future<void> _fetchRoomAvailability() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? token = prefs.getString('auth_token');
+
+    if (token == null || token.isEmpty) {
+      setState(() {
+        isLoadingRooms = false;
+      });
+      return;
+    }
+
+    // Current date in YYYY-MM-DD format
+    DateTime today = DateTime.now();
+    String formattedDate =
+        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+    String url = ApiConstants.dailyroomDetailsEndPoint
+        .replaceAll('{{value}}', formattedDate);
+
+    try {
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+        if (jsonData['success'] == true && jsonData['data'].isNotEmpty) {
+          final firstDay = jsonData['data'][0];
+          setState(() {
+            totalRooms = firstDay['total_rooms'] ?? 0;
+            availableRooms = firstDay['available_rooms'] ?? 0;
+            bookedRooms = firstDay['booked_rooms'] ?? 0;
+            maintenanceRooms = firstDay['under_maintenance_rooms'] ?? 0;
+            isLoadingRooms = false;
+          });
+        } else {
+          setState(() {
+            isLoadingRooms = false;
+          });
+        }
+      } else {
+        setState(() {
+          isLoadingRooms = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoadingRooms = false;
+      });
+    }
+  }
+
+  // Fetch Recent Transactions (latest 5)
   Future<void> _fetchRecentTransactions() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
@@ -253,7 +320,7 @@ class _DashboardHomeState extends State<DashboardHome> {
     if (token == null || token.isEmpty) {
       setState(() {
         isLoadingTransactions = false;
-        errorMessage = 'Not logged in';
+        transactionError = 'Not logged in';
       });
       return;
     }
@@ -275,35 +342,32 @@ class _DashboardHomeState extends State<DashboardHome> {
           final List<dynamic> allTransactions =
               jsonData['data']['sell_transactions']['paid'] ?? [];
           setState(() {
-            allTransactions.sort((a, b) {
-              String dateA = a['transaction_date'] ?? '';
-              String dateB = b['transaction_date'] ?? '';
-              if (dateA.isEmpty || dateB.isEmpty) return 0;
-              return dateB.compareTo(dateA);
-            });
+            allTransactions.sort((a, b) => (b['transaction_date'] ?? '')
+                .compareTo(a['transaction_date'] ?? ''));
             recentTransactions = allTransactions.take(5).toList();
             isLoadingTransactions = false;
           });
         } else {
           setState(() {
-            errorMessage = jsonData['message'] ?? 'No data';
+            transactionError = jsonData['message'] ?? 'No data';
             isLoadingTransactions = false;
           });
         }
       } else {
         setState(() {
-          errorMessage = 'Server error';
+          transactionError = 'Server error';
           isLoadingTransactions = false;
         });
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Network error';
+        transactionError = 'Network error';
         isLoadingTransactions = false;
       });
     }
   }
 
+  // Fetch Revenue Data
   Future<void> _fetchRevenueData() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
@@ -337,9 +401,7 @@ class _DashboardHomeState extends State<DashboardHome> {
             double revenue =
                 double.tryParse(item['total_revenue']?.toString() ?? '0') ??
                     0.0;
-            if (date.isNotEmpty) {
-              revenueMap[date] = revenue;
-            }
+            if (date.isNotEmpty) revenueMap[date] = revenue;
           }
 
           _updateRevenueGraph(revenueMap);
@@ -387,10 +449,7 @@ class _DashboardHomeState extends State<DashboardHome> {
 
       double revenue = revenueMap[formattedDate] ?? 0.0;
 
-      lastDays.add({
-        'date': displayDate,
-        'revenue': revenue,
-      });
+      lastDays.add({'date': displayDate, 'revenue': revenue});
     }
 
     setState(() {
@@ -457,7 +516,7 @@ class _DashboardHomeState extends State<DashboardHome> {
             ),
             const SizedBox(height: 24),
 
-            // Available Rooms (unchanged)
+            // Available Rooms - REAL DATA FROM BACKEND (Today)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -471,20 +530,25 @@ class _DashboardHomeState extends State<DashboardHome> {
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildStatItem(Icons.hotel, '20', 'Rooms'),
-                      _buildStatItem(
-                          Icons.calendar_today, '20', 'Availability'),
-                      _buildStatItem(Icons.bed, '20', 'Occupied'),
-                      _buildStatItem(Icons.build, '20', 'Not-Ready'),
-                    ],
-                  ),
+                  isLoadingRooms
+                      ? const Center(child: CircularProgressIndicator())
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildStatItem(
+                                Icons.hotel, totalRooms.toString(), 'Rooms'),
+                            _buildStatItem(Icons.calendar_today,
+                                availableRooms.toString(), 'Available'),
+                            _buildStatItem(
+                                Icons.bed, bookedRooms.toString(), 'Occupied'),
+                            _buildStatItem(Icons.build,
+                                maintenanceRooms.toString(), 'Maintenance'),
+                          ],
+                        ),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -496,7 +560,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                      // color: const Color(0xFFF5E6D3),
+                      color: const Color(0xFFF5E6D3),
                       borderRadius: BorderRadius.circular(20)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
@@ -516,9 +580,9 @@ class _DashboardHomeState extends State<DashboardHome> {
                 ),
               ],
             ),
-            const SizedBox(height: 0),
+            const SizedBox(height: 16),
 
-            // Revenue Graph - Now horizontally scrollable for 15 days
+            // Revenue Graph
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -538,13 +602,13 @@ class _DashboardHomeState extends State<DashboardHome> {
                           height: 150,
                           child: Center(child: CircularProgressIndicator()))
                       : SizedBox(
-                          height: 130,
+                          height: 150,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: revenueData.map((dayData) {
-                                double revenue = dayData['revnue'] ?? 0.0;
+                                double revenue = dayData['revenue'] ?? 0.0;
                                 double maxRevenue = revenueData.isEmpty
                                     ? 1
                                     : revenueData
@@ -587,7 +651,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                 ],
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 30),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -596,19 +660,24 @@ class _DashboardHomeState extends State<DashboardHome> {
                     style:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TransactionsPage()));
+                    },
                     child: const Text('Show All',
                         style: TextStyle(color: Colors.brown))),
               ],
             ),
-            const SizedBox(height: 0),
+            const SizedBox(height: 16),
 
-            // Real Recent Transactions (latest 5)
+            // Recent Transactions
             isLoadingTransactions
                 ? const Center(child: CircularProgressIndicator())
-                : errorMessage.isNotEmpty
+                : transactionError.isNotEmpty
                     ? Center(
-                        child: Text(errorMessage,
+                        child: Text(transactionError,
                             style: const TextStyle(color: Colors.red)))
                     : recentTransactions.isEmpty
                         ? const Center(child: Text('No recent transactions'))
@@ -688,66 +757,6 @@ class _DashboardHomeState extends State<DashboardHome> {
           ),
           const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
         ],
-      ),
-    );
-  }
-}
-
-// ===================== ROOMS PAGE & OTHERS - EXACT SAME AS BEFORE =====================
-class RoomsPage extends StatelessWidget {
-  const RoomsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFB1936B),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFB1936B),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text('Rooms',
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold)),
-        actions: const [SizedBox(width: 48)],
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(40), topRight: Radius.circular(40)),
-        ),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 30, 20, 30),
-          children: const [
-            RoomListCard(
-              imageUrl: 'https://via.placeholder.com/400x200?text=Standard',
-              title: 'Standard',
-              bedInfo: '1 Queen Bed | 1 Bed',
-              description:
-                  'A well-designed room offering all basic amenities needed for a comfortable stay.',
-              availability: 'Occupied',
-              availabilityColor: Colors.red,
-              price: 'Rs. 2500',
-            ),
-            SizedBox(height: 16),
-            RoomListCard(
-              imageUrl: 'https://via.placeholder.com/400x200?text=Deluxe',
-              title: 'Deluxe',
-              bedInfo: '1 King Bed | 1 Bed',
-              description:
-                  'Spacious room with premium amenities and elegant furnishing.',
-              availability: 'Available',
-              availabilityColor: Colors.green,
-              price: 'Rs. 2500',
-            ),
-          ],
-        ),
       ),
     );
   }
