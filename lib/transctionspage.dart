@@ -268,7 +268,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                               color:
                                                   statusColor.withOpacity(0.15),
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(29),
                                             ),
                                             child: Text(
                                               status,
