@@ -273,7 +273,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                             child: Text(
                                               status,
                                               style: TextStyle(
-                                                fontSize: 15,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 color: statusColor,
                                               ),
