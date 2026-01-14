@@ -1,4 +1,11 @@
+// File: roomspage.dart
+// UPDATED: Uses correct roomTypesEndPoint format with dynamic start_date & end_date
+// Fetches real room types + availability + pricing
+// Beautiful modern card UI, supports past/future dates (default: today to tomorrow)
+// Uses SharedPreferences for Bearer token
+
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:http/http.dart' as http;
@@ -16,10 +23,9 @@ class _RoomsPageState extends State<RoomsPage> {
   bool isLoading = true;
   String errorMessage = '';
 
-  // Date range (you can change this later with date picker)
+  // Default date range: today to tomorrow
   DateTime startDate = DateTime.now();
-  DateTime endDate =
-      DateTime.now().add(const Duration(days: 1)); // Default: today to tomorrow
+  DateTime endDate = DateTime.now().add(const Duration(days: 1));
 
   @override
   void initState() {
@@ -39,14 +45,16 @@ class _RoomsPageState extends State<RoomsPage> {
       return;
     }
 
+    // Format dates as YYYY-MM-DD
     String start =
         '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
     String end =
         '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
 
+    // Replace BOTH {{value}} placeholders
     String url = ApiConstants.roomTypesEndPoint
-        .replaceAll('{{value}}', start) // First {{value}} = start_date
-        .replaceAll('{{value}}', end); // Second {{value}} = end_date
+        .replaceFirst('{{value}}', start) // start_date
+        .replaceFirst('{{value}}', end); // end_date
 
     try {
       final response = await http.get(
@@ -68,7 +76,7 @@ class _RoomsPageState extends State<RoomsPage> {
           });
         } else {
           setState(() {
-            errorMessage = jsonData['message'] ?? 'No room data found';
+            errorMessage = jsonData['message'] ?? 'No room types found';
             isLoading = false;
           });
         }
@@ -80,7 +88,7 @@ class _RoomsPageState extends State<RoomsPage> {
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Network error. Check your connection$e.';
+        errorMessage = 'Network error. Check your connection.';
         isLoading = false;
       });
     }
@@ -115,14 +123,14 @@ class _RoomsPageState extends State<RoomsPage> {
         ),
         child: Column(
           children: [
-            // Optional: Date range picker (you can add later)
+            // Show selected date range
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Showing rooms from ${startDate.day}/${startDate.month}/${startDate.year} to ${endDate.day}/${endDate.month}/${endDate.year}',
+                    'Showing availability: ${startDate.day}/${startDate.month}/${startDate.year} to ${endDate.day}/${endDate.month}/${endDate.year}',
                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                 ],
@@ -197,7 +205,7 @@ class _RoomsPageState extends State<RoomsPage> {
     );
   }
 
-  // Helper to choose placeholder image based on room type
+  // Placeholder image based on room type
   String _getImageForType(String type) {
     type = type.toLowerCase();
     if (type.contains('deluxe'))
@@ -234,7 +242,7 @@ class RoomListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      height: 240,
+      height: 260,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -254,12 +262,12 @@ class RoomListCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
             child: Image.network(
               imageUrl,
-              height: 120,
+              height: 140,
               width: double.infinity,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  height: 120,
+                  height: 140,
                   color: Colors.grey.shade300,
                   child: const Icon(Icons.image_not_supported,
                       size: 50, color: Colors.grey),
