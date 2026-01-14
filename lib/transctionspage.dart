@@ -1,7 +1,3 @@
-// File name: transactionspage.dart
-// UPDATED VERSION - Uses SharedPreferences to fetch saved Bearer token
-// Token saved in Loginpage → loaded here for authenticated API calls
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -118,8 +114,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
         ),
         child: Column(
           children: [
-            // Title
-            Padding(
+            const Padding(
               padding: const EdgeInsets.fromLTRB(24, 40, 24, 20),
               child: Row(
                 children: const [

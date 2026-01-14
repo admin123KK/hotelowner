@@ -9,4 +9,6 @@ class ApiConstants {
   static const String revenueDayEndPoint = "$baseUrl/today-revenue";
   static const String dailyroomDetailsEndPoint =
       "$baseUrl/rooms-summary?start_date={{value}}&end_date={{value}}";
+  static const String roomTypesEndPoint =
+      "{{base_url}}/room-types?start_date={{value}}&end_date={{value}}";
 }

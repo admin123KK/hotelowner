@@ -1,5 +1,3 @@
-// File name: bookingpage.dart
-
 import 'package:flutter/material.dart';
 
 class BookingPage extends StatelessWidget {
@@ -157,7 +155,7 @@ class BookingPage extends StatelessWidget {
                               ),
 
                               // Check In/Out
-                              Expanded(
+                              const Expanded(
                                 flex: 4,
                                 child: Text(
                                   '20Dec-29Dec',
