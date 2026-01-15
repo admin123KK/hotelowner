@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
@@ -556,16 +557,16 @@ class _DashboardHomeState extends State<DashboardHome> {
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                   decoration: BoxDecoration(
                       color: const Color(0xFFF5E6D3),
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(15)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: selectedPeriod,
-                      icon: const Icon(Icons.arrow_drop_down, size: 18),
+                      icon: const Icon(Icons.arrow_drop_down, size: 10),
                       style:
-                          const TextStyle(fontSize: 14, color: Colors.black87),
+                          const TextStyle(fontSize: 11, color: Colors.black87),
                       onChanged: _onPeriodChanged,
                       items: const [
                         DropdownMenuItem(

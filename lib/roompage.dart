@@ -38,18 +38,23 @@ class _RoomsPageState extends State<RoomsPage> {
       return;
     }
 
+    // Format dates: YYYY-MM-DD
     String start =
         '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
     String end =
         '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
 
-    String url = ApiConstants.roomTypesEndPoint
-        .replaceFirst('{{value}}', start) // start_date
-        .replaceFirst('{{value}}', end); // end_date
+    // Build URL correctly using Uri.replace() - no placeholder issues
+    final uri = Uri.parse(ApiConstants.roomTypesEndPoint).replace(
+      queryParameters: {
+        'start_date': start,
+        'end_date': end,
+      },
+    );
 
     try {
       final response = await http.get(
-        Uri.parse(url),
+        uri,
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -73,13 +78,14 @@ class _RoomsPageState extends State<RoomsPage> {
         }
       } else {
         setState(() {
-          errorMessage = 'Server error: ${response.statusCode}';
+          errorMessage =
+              'Server error: ${response.statusCode} - ${response.body}';
           isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Network error. Check your connectio$e.';
+        errorMessage = 'Network error: $e';
         isLoading = false;
       });
     }
@@ -114,15 +120,18 @@ class _RoomsPageState extends State<RoomsPage> {
         ),
         child: Column(
           children: [
-            // Show selected date range
+            // Date range info
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Showing availability: ${startDate.day}/${startDate.month}/${startDate.year} to ${endDate.day}/${endDate.month}/${endDate.year}',
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    'Showing: ${startDate.day}/${startDate.month}/${startDate.year} to ${endDate.day}/${endDate.month}/${endDate.year}',
+                    style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -133,11 +142,14 @@ class _RoomsPageState extends State<RoomsPage> {
                   ? const Center(child: CircularProgressIndicator())
                   : errorMessage.isNotEmpty
                       ? Center(
-                          child: Text(
-                            errorMessage,
-                            style: const TextStyle(
-                                color: Colors.red, fontSize: 16),
-                            textAlign: TextAlign.center,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Text(
+                              errorMessage,
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 16),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         )
                       : roomTypes.isEmpty
@@ -146,8 +158,7 @@ class _RoomsPageState extends State<RoomsPage> {
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.grey)))
                           : ListView.builder(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 20, 30),
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                               itemCount: roomTypes.length,
                               itemBuilder: (context, index) {
                                 final room = roomTypes[index];
@@ -164,7 +175,7 @@ class _RoomsPageState extends State<RoomsPage> {
                                         0;
                                 final double price = double.tryParse(
                                       room['default_pricing']
-                                                  ['default_price_per_night']
+                                                  ?['default_price_per_night']
                                               ?.toString() ??
                                           '0',
                                     ) ??
@@ -179,13 +190,12 @@ class _RoomsPageState extends State<RoomsPage> {
                                   imageUrl: _getImageForType(type),
                                   title: type,
                                   bedInfo:
-                                      '$totalRooms Rooms • $available Available',
+                                      'Queen Bed | 1 Bed', // Adjust based on your real data
                                   description:
-                                      'Booked: $booked | Maintenance: $maintenance',
+                                      'A well-designed room offering all basic amenities needed for a comfortable stay.',
                                   availability: status,
                                   availabilityColor: statusColor,
-                                  price:
-                                      'Rs. ${price.toStringAsFixed(0)} / night',
+                                  price: 'Rs. ${price.toStringAsFixed(0)}',
                                 );
                               },
                             ),
@@ -196,16 +206,17 @@ class _RoomsPageState extends State<RoomsPage> {
     );
   }
 
-  // Placeholder image based on room type
   String _getImageForType(String type) {
     type = type.toLowerCase();
     if (type.contains('deluxe'))
-      return 'https://via.placeholder.com/400x200?text=Deluxe';
-    if (type.contains('standard'))
-      return 'https://via.placeholder.com/400x200?text=Standard';
+      return 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
     if (type.contains('special'))
-      return 'https://via.placeholder.com/400x200?text=Special';
-    return 'https://via.placeholder.com/400x200?text=$type';
+      return 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+    if (type.contains('suite'))
+      return 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+    if (type.contains('family'))
+      return 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+    return 'https://via.placeholder.com/400x300?text=$type';
   }
 }
 
@@ -233,15 +244,14 @@ class RoomListCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
-      height: 260,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -250,51 +260,37 @@ class RoomListCard extends StatelessWidget {
         children: [
           // Image
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             child: Image.network(
               imageUrl,
-              height: 140,
+              height: 180,
               width: double.infinity,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 140,
-                  color: Colors.grey.shade300,
-                  child: const Icon(Icons.image_not_supported,
-                      size: 50, color: Colors.grey),
-                );
-              },
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 180,
+                color: Colors.grey.shade300,
+                child: const Icon(Icons.hotel, size: 80, color: Colors.grey),
+              ),
             ),
           ),
 
-          // Details
+          // Content
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  bedInfo,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  description,
-                  style: const TextStyle(fontSize: 13, color: Colors.black87),
-                ),
-                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 6),
+                          horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
                         color: availabilityColor.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(30),
@@ -308,12 +304,28 @@ class RoomListCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text(
-                      price,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
                   ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  bedInfo,
+                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  description,
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    price,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87),
+                  ),
                 ),
               ],
             ),
