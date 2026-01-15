@@ -123,7 +123,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   Text(
                     'All Transactions',
                     style: TextStyle(
-                        fontSize: 26,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: Colors.black87),
                   ),
@@ -215,7 +215,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                       Text(
                                         customerName,
                                         style: const TextStyle(
-                                          fontSize: 22,
+                                          fontSize: 19,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.black87,
                                         ),
@@ -230,7 +230,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                           Text(
                                             'Invoice: $invoiceNo',
                                             style: const TextStyle(
-                                                fontSize: 15,
+                                                fontSize: 13,
                                                 color: Colors.grey),
                                           ),
                                           Text(
@@ -251,24 +251,24 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                           Text(
                                             'Rs. $amount',
                                             style: const TextStyle(
-                                              fontSize: 22,
+                                              fontSize: 17,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.black87,
                                             ),
                                           ),
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 8),
+                                                horizontal: 10, vertical: 8),
                                             decoration: BoxDecoration(
                                               color:
                                                   statusColor.withOpacity(0.15),
                                               borderRadius:
-                                                  BorderRadius.circular(30),
+                                                  BorderRadius.circular(17),
                                             ),
                                             child: Text(
                                               status,
                                               style: TextStyle(
-                                                fontSize: 19,
+                                                fontSize: 13,
                                                 fontWeight: FontWeight.bold,
                                                 color: statusColor,
                                               ),

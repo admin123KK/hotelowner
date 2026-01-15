@@ -1,9 +1,3 @@
-// File: roomspage.dart
-// UPDATED: Uses correct roomTypesEndPoint format with dynamic start_date & end_date
-// Fetches real room types + availability + pricing
-// Beautiful modern card UI, supports past/future dates (default: today to tomorrow)
-// Uses SharedPreferences for Bearer token
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -23,7 +17,6 @@ class _RoomsPageState extends State<RoomsPage> {
   bool isLoading = true;
   String errorMessage = '';
 
-  // Default date range: today to tomorrow
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now().add(const Duration(days: 1));
 
@@ -45,13 +38,11 @@ class _RoomsPageState extends State<RoomsPage> {
       return;
     }
 
-    // Format dates as YYYY-MM-DD
     String start =
         '${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
     String end =
         '${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}';
 
-    // Replace BOTH {{value}} placeholders
     String url = ApiConstants.roomTypesEndPoint
         .replaceFirst('{{value}}', start) // start_date
         .replaceFirst('{{value}}', end); // end_date
@@ -88,7 +79,7 @@ class _RoomsPageState extends State<RoomsPage> {
       }
     } catch (e) {
       setState(() {
-        errorMessage = 'Network error. Check your connection.';
+        errorMessage = 'Network error. Check your connectio$e.';
         isLoading = false;
       });
     }

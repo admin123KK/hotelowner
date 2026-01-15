@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
@@ -488,7 +487,6 @@ class _DashboardHomeState extends State<DashboardHome> {
                     color: Colors.black87)),
             const SizedBox(height: 30),
 
-            // Reservation Details (unchanged)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -672,7 +670,6 @@ class _DashboardHomeState extends State<DashboardHome> {
             ),
             const SizedBox(height: 16),
 
-            // Recent Transactions
             isLoadingTransactions
                 ? const Center(child: CircularProgressIndicator())
                 : transactionError.isNotEmpty
