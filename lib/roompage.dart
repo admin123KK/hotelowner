@@ -154,7 +154,7 @@ class _RoomsPageState extends State<RoomsPage> {
                         )
                       : roomTypes.isEmpty
                           ? const Center(
-                              child: Text('No room types available',
+                              child: Text('room types available',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.grey)))
                           : ListView.builder(
