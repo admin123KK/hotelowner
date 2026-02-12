@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
 import 'package:hotelowner/loginpage.dart';
+import 'package:hotelowner/productpage.dart';
 import 'package:hotelowner/roompage.dart';
 import 'package:hotelowner/transctionspage.dart';
 import 'package:http/http.dart' as http;
@@ -179,6 +180,8 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
             _buildDrawerItem(Icons.hotel, 'Rooms', const RoomsPage()),
             _buildDrawerItem(
                 Icons.receipt_long, 'Transactions', const TransactionsPage()),
+            _buildDrawerItem(Icons.download_for_offline_outlined, 'Add Prodcut',
+                const AddProductPage()),
             _buildDrawerItem(Icons.bar_chart, 'Stats', const StatsPage()),
             _buildDrawerItem(Icons.settings, 'Setting', const SettingsPage()),
             _buildDrawerItem(Icons.book_online_outlined, 'Booking Detail',
@@ -219,7 +222,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 }
 
-// ===================== DASHBOARD HOME - REAL ROOM AVAILABILITY + REVENUE GRAPH =====================
+// ===================== DASHBOARD HOME - FIXED RANGEERROR =====================
 class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
 
@@ -228,17 +231,14 @@ class DashboardHome extends StatefulWidget {
 }
 
 class _DashboardHomeState extends State<DashboardHome> {
-  // Recent Transactions
   List<dynamic> recentTransactions = [];
   bool isLoadingTransactions = true;
   String transactionError = '';
 
-  // Revenue Graph
   List<Map<String, dynamic>> revenueData = [];
   bool isLoadingRevenue = true;
   String selectedPeriod = 'Last 7 Days';
 
-  // Room Availability (Today)
   int totalRooms = 0;
   int availableRooms = 0;
   int bookedRooms = 0;
@@ -250,10 +250,9 @@ class _DashboardHomeState extends State<DashboardHome> {
     super.initState();
     _fetchRecentTransactions();
     _fetchRevenueData();
-    _fetchRoomAvailability(); // Today's data
+    _fetchRoomAvailability();
   }
 
-  // Fetch Today's Room Summary
   Future<void> _fetchRoomAvailability() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
@@ -265,7 +264,6 @@ class _DashboardHomeState extends State<DashboardHome> {
       return;
     }
 
-    // Current date in YYYY-MM-DD format
     DateTime today = DateTime.now();
     String formattedDate =
         '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
@@ -286,13 +284,25 @@ class _DashboardHomeState extends State<DashboardHome> {
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = jsonDecode(response.body);
 
-        if (jsonData['success'] == true && jsonData['data'].isNotEmpty) {
-          final firstDay = jsonData['data'][0];
+        if (jsonData['success'] == true) {
+          final List<dynamic> dataList = jsonData['data'] ?? [];
+
           setState(() {
-            totalRooms = firstDay['total_rooms'] ?? 0;
-            availableRooms = firstDay['available_rooms'] ?? 0;
-            bookedRooms = firstDay['booked_rooms'] ?? 0;
-            maintenanceRooms = firstDay['under_maintenance_rooms'] ?? 0;
+            if (dataList.isNotEmpty) {
+              final firstDay = dataList[0];
+              totalRooms = (firstDay['total_rooms'] as num?)?.toInt() ?? 0;
+              availableRooms =
+                  (firstDay['available_rooms'] as num?)?.toInt() ?? 0;
+              bookedRooms = (firstDay['booked_rooms'] as num?)?.toInt() ?? 0;
+              maintenanceRooms =
+                  (firstDay['under_maintenance_rooms'] as num?)?.toInt() ?? 0;
+            } else {
+              // FIXED: No crash when data is empty
+              totalRooms = 0;
+              availableRooms = 0;
+              bookedRooms = 0;
+              maintenanceRooms = 0;
+            }
             isLoadingRooms = false;
           });
         } else {
@@ -312,7 +322,6 @@ class _DashboardHomeState extends State<DashboardHome> {
     }
   }
 
-  // Fetch Recent Transactions (latest 5)
   Future<void> _fetchRecentTransactions() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
@@ -367,7 +376,6 @@ class _DashboardHomeState extends State<DashboardHome> {
     }
   }
 
-  // Fetch Revenue Data
   Future<void> _fetchRevenueData() async {
     final prefs = await SharedPreferences.getInstance();
     final String? token = prefs.getString('auth_token');
@@ -487,7 +495,6 @@ class _DashboardHomeState extends State<DashboardHome> {
                     fontWeight: FontWeight.bold,
                     color: Colors.black87)),
             const SizedBox(height: 30),
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -514,8 +521,6 @@ class _DashboardHomeState extends State<DashboardHome> {
               ),
             ),
             const SizedBox(height: 24),
-
-            // Available Rooms - REAL DATA FROM BACKEND (Today)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -548,7 +553,6 @@ class _DashboardHomeState extends State<DashboardHome> {
               ),
             ),
             const SizedBox(height: 30),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -580,8 +584,6 @@ class _DashboardHomeState extends State<DashboardHome> {
               ],
             ),
             const SizedBox(height: 16),
-
-            // Revenue Graph
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -651,7 +653,6 @@ class _DashboardHomeState extends State<DashboardHome> {
               ),
             ),
             const SizedBox(height: 30),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -670,7 +671,6 @@ class _DashboardHomeState extends State<DashboardHome> {
               ],
             ),
             const SizedBox(height: 16),
-
             isLoadingTransactions
                 ? const Center(child: CircularProgressIndicator())
                 : transactionError.isNotEmpty
@@ -733,7 +733,7 @@ class _DashboardHomeState extends State<DashboardHome> {
           CircleAvatar(
               radius: 26,
               backgroundColor: Colors.grey.shade200,
-              child: Text(name[0],
+              child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?',
                   style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,

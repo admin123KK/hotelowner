@@ -1,7 +1,3 @@
-// File name: loginpage.dart
-// FINAL VERSION - Saves token locally with SharedPreferences
-// Token can be used in any page for authenticated API calls
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
