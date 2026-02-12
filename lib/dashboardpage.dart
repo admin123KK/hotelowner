@@ -122,7 +122,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     return Scaffold(
       appBar: _currentPage.runtimeType == DashboardHome
           ? AppBar(
-              backgroundColor: const Color(0xFFB1936B),
+              backgroundColor: const Color(0xFF312C51),
               elevation: 0,
               leading: Builder(
                 builder: (context) => IconButton(
@@ -134,7 +134,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
             )
           : null,
       drawer: _currentPage.runtimeType == DashboardHome ? _buildDrawer() : null,
-      backgroundColor: const Color(0xFFB1936B),
+      backgroundColor: const Color(0xFF312C51),
       body: _currentPage,
     );
   }
@@ -150,7 +150,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
               height: 220,
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
-                color: Color(0xFFB1936B),
+                color: Color(0xFF312C51),
                 borderRadius:
                     BorderRadius.only(bottomRight: Radius.circular(40)),
               ),
@@ -162,7 +162,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                     radius: 40,
                     backgroundColor: Colors.white,
                     child:
-                        Icon(Icons.person, size: 50, color: Color(0xFFB1936B)),
+                        Icon(Icons.person, size: 50, color: Color(0xFF312C51)),
                   ),
                   SizedBox(height: 16),
                   Text('Hotel Owner',
@@ -200,12 +200,12 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
 
     return ListTile(
       leading: Icon(icon,
-          color: isSelected ? const Color(0xFFB1936B) : Colors.grey.shade700),
+          color: isSelected ? const Color(0xFF312C51) : Colors.grey.shade700),
       title: Text(
         title,
         style: TextStyle(
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? const Color(0xFFB1936B) : Colors.black87,
+          color: isSelected ? const Color(0xFF312C51) : Colors.black87,
         ),
       ),
       selected: isSelected,
@@ -499,14 +499,16 @@ class _DashboardHomeState extends State<DashboardHome> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBF5),
+                  color: const Color(0xFF48426D),
                   borderRadius: BorderRadius.circular(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Reservation Details',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -525,14 +527,16 @@ class _DashboardHomeState extends State<DashboardHome> {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBF5),
+                  color: const Color(0xFF48426D),
                   borderRadius: BorderRadius.circular(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('Available Rooms',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
                   const SizedBox(height: 20),
                   isLoadingRooms
                       ? const Center(child: CircularProgressIndicator())
@@ -561,16 +565,15 @@ class _DashboardHomeState extends State<DashboardHome> {
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                   decoration: BoxDecoration(
-                      color: const Color(0xFFF5E6D3),
+                      color: const Color(0xFF48426D),
                       borderRadius: BorderRadius.circular(15)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: selectedPeriod,
                       icon: const Icon(Icons.arrow_drop_down, size: 10),
-                      style:
-                          const TextStyle(fontSize: 11, color: Colors.black87),
+                      style: const TextStyle(fontSize: 11, color: Colors.grey),
                       onChanged: _onPeriodChanged,
                       items: const [
                         DropdownMenuItem(
@@ -594,7 +597,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      _buildLegendItem(const Color(0xFFD4B896), 'Revenue'),
+                      _buildLegendItem(const Color(0xFF48426D), 'Revenue'),
                     ],
                   ),
                   const SizedBox(height: 24),
@@ -630,7 +633,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                                         width: 36,
                                         height: height,
                                         decoration: const BoxDecoration(
-                                          color: Color(0xFFD4B896),
+                                          color: Color(0xFF48426D),
                                           borderRadius: BorderRadius.vertical(
                                               top: Radius.circular(8)),
                                         ),
@@ -708,7 +711,7 @@ class _DashboardHomeState extends State<DashboardHome> {
   Widget _buildStatItem(IconData icon, String count, String label) {
     return Column(
       children: [
-        Icon(icon, size: 32, color: Colors.brown.shade700),
+        Icon(icon, size: 32, color: Colors.white),
         const SizedBox(height: 8),
         Text(count,
             style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),

@@ -124,13 +124,13 @@ class _LoginpageState extends State<Loginpage> {
     final double height = size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFB1936B),
+      backgroundColor: const Color(0xFF312C51),
       body: SafeArea(
         child: Stack(
           children: [
             Container(
               height: height * 0.25,
-              color: const Color(0xFFB1936B),
+              color: const Color(0xFF312C51),
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -228,7 +228,7 @@ class _LoginpageState extends State<Loginpage> {
                           child: const Text(
                             'Forgot Password?',
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Color(0xFF312C51),
                                 fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -240,7 +240,9 @@ class _LoginpageState extends State<Loginpage> {
                           height: 55,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: _isLoading ? Colors.grey : Colors.black,
+                            color: _isLoading
+                                ? Color(0xFF312C51)
+                                : Color(0xFF312C51),
                             borderRadius: BorderRadius.circular(13),
                           ),
                           child: Center(

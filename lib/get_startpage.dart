@@ -11,7 +11,7 @@ class GetStartpage extends StatelessWidget {
     final double height = size.height;
     final double width = size.width;
     return Scaffold(
-      backgroundColor: const Color(0xFFB1936B), // Your brown/tan background
+      backgroundColor: const Color(0xFF312C51), // Your brown/tan background
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -23,7 +23,7 @@ class GetStartpage extends StatelessWidget {
 
               // Main title text
               Text(
-                'We makwe you feel \nLike Home',
+                'We make you feel \nLike Home',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize:
@@ -51,14 +51,14 @@ class GetStartpage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.black,
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Center(
                       child: Text(
                         'Get Started',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
                         ),
