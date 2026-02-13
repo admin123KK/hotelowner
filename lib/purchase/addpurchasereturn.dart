@@ -11,10 +11,11 @@ class _AddPurchaseReturnPageState extends State<AddPurchaseReturnPage> {
   final _billNoController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final primaryColor = const Color(0xFFB1936B); // your app's brown/gold
-  final accentColor = const Color(0xFFF5E6D3); // light beige
-  final searchButtonColor =
-      const Color(0xFF1976D2); // blue from your screenshot
+  bool _isSearching = false; // for future loading state
+
+  final primaryColor = const Color(0xFF312C51);
+  final accentColor = const Color(0xFFF5E6D3);
+  final searchButtonColor = const Color(0xFF312C51);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class _AddPurchaseReturnPageState extends State<AddPurchaseReturnPage> {
           ),
         ),
         centerTitle: true,
-        actions: const [SizedBox(width: 56)], // balance layout
+        actions: const [SizedBox(width: 56)],
       ),
       body: SafeArea(
         child: Container(
@@ -54,107 +55,147 @@ class _AddPurchaseReturnPageState extends State<AddPurchaseReturnPage> {
               ),
             ],
           ),
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  const SizedBox(
-                    height: double.infinity,
-                  ),
-
-                  // Main Card - Find Purchase for Return
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Title
-                          Text(
-                            'Find Purchase for Return',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  // mainAxisAlignment: MainAxisAlignment.center,
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Main Card
+                    Card(
+                      elevation: 6,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(32.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Title
+                            Center(
+                              child: Text(
+                                'Find Purchase for Return',
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: primaryColor,
+                                ),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 24),
+                            const SizedBox(height: 32),
 
-                          // Bill No Field + Search Button
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _billNoController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Bill No:*',
-                                    hintText: 'Bill No',
-                                    border: OutlineInputBorder(
+                            // Bill No Field + Search Button
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _billNoController,
+                                    autofocus:
+                                        true, // auto focus when page opens
+                                    decoration: InputDecoration(
+                                      labelText: 'Bill No*',
+                                      hintText: 'Enter Bill No',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 16,
+                                      ),
+                                      filled: true,
+                                      fillColor: Colors.grey.shade50,
+                                      errorStyle: const TextStyle(
+                                          color: Colors.redAccent),
+                                    ),
+                                    validator: (value) {
+                                      if (value == null ||
+                                          value.trim().isEmpty) {
+                                        return 'Bill No is required';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                ElevatedButton.icon(
+                                  onPressed: _isSearching
+                                      ? null
+                                      : () {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            setState(() => _isSearching = true);
+
+                                            // Simulate API call delay
+                                            Future.delayed(
+                                                const Duration(seconds: 1), () {
+                                              setState(
+                                                  () => _isSearching = false);
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                SnackBar(
+                                                  content: Text(
+                                                    'Searching for Bill: ${_billNoController.text.trim()}',
+                                                  ),
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              );
+                                              // TODO: Real API call here
+                                            });
+                                          }
+                                        },
+                                  icon: _isSearching
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.5,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : const Icon(Icons.search, size: 20),
+                                  label: Text(
+                                      _isSearching ? 'Searching...' : 'Search'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: searchButtonColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 14),
-                                    filled: true,
-                                    fillColor: Colors.grey.shade50,
+                                    elevation: 3,
                                   ),
-                                  validator: (value) {
-                                    if (value == null || value.trim().isEmpty) {
-                                      return 'Bill No is required';
-                                    }
-                                    return null;
-                                  },
                                 ),
-                              ),
-                              const SizedBox(width: 12),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  if (_formKey.currentState!.validate()) {
-                                    // TODO: Search API call with _billNoController.text
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(
-                                              'Searching for Bill: ${_billNoController.text}')),
-                                    );
-                                  }
-                                },
-                                icon: const Icon(Icons.search, size: 20),
-                                label: const Text('Search'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: searchButtonColor,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 14),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Helper text
-                          Text(
-                            'Enter purchase reference number to create return',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade700,
-                              fontStyle: FontStyle.italic,
+                              ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+
+                            // Helper text
+                            Center(
+                              child: Text(
+                                'Enter purchase reference number to create return',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-
-                  const SizedBox(height: 40),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
