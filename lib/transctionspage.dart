@@ -91,9 +91,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB1936B),
+      backgroundColor: const Color(0xFF312C51),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFB1936B),
+        backgroundColor: const Color(0xFF312C51),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),

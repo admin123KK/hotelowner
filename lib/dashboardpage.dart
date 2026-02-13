@@ -122,6 +122,11 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     return Scaffold(
       appBar: _currentPage.runtimeType == DashboardHome
           ? AppBar(
+              title: const Text(
+                'Beyond 360',
+                style:
+                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
               backgroundColor: const Color(0xFF312C51),
               elevation: 0,
               leading: Builder(
@@ -175,8 +180,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 ],
               ),
             ),
-            _buildDrawerItem(
-                Icons.dashboard, 'Dashboard', const DashboardHome()),
+            _buildDrawerItem(Icons.dashboard, 'Dashboard', MainDashboardPage()),
             _buildDrawerItem(Icons.hotel, 'Rooms', const RoomsPage()),
             _buildDrawerItem(
                 Icons.receipt_long, 'Transactions', const TransactionsPage()),
@@ -567,13 +571,13 @@ class _DashboardHomeState extends State<DashboardHome> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                   decoration: BoxDecoration(
-                      color: const Color(0xFF48426D),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(15)),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       value: selectedPeriod,
                       icon: const Icon(Icons.arrow_drop_down, size: 10),
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
+                      style: const TextStyle(fontSize: 11, color: Colors.black),
                       onChanged: _onPeriodChanged,
                       items: const [
                         DropdownMenuItem(
@@ -670,7 +674,7 @@ class _DashboardHomeState extends State<DashboardHome> {
                               builder: (context) => const TransactionsPage()));
                     },
                     child: const Text('Show All',
-                        style: TextStyle(color: Colors.brown))),
+                        style: TextStyle(color: Color(0xFF312C51)))),
               ],
             ),
             const SizedBox(height: 16),
@@ -714,7 +718,10 @@ class _DashboardHomeState extends State<DashboardHome> {
         Icon(icon, size: 32, color: Colors.white),
         const SizedBox(height: 8),
         Text(count,
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+            style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
         Text(label, style: const TextStyle(fontSize: 14, color: Colors.grey)),
       ],
     );

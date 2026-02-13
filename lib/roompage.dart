@@ -94,9 +94,9 @@ class _RoomsPageState extends State<RoomsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB1936B),
+      backgroundColor: const Color(0xFF312C51),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFB1936B),
+        backgroundColor: const Color(0xFF312C51),
         elevation: 0,
         automaticallyImplyLeading: false,
         leading: IconButton(

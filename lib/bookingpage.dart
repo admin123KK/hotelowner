@@ -6,9 +6,9 @@ class BookingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB1936B),
+      backgroundColor: const Color(0xFF312C51),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFB1936B),
+        backgroundColor: const Color(0xFF312C51),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
@@ -53,12 +53,16 @@ class BookingPage extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                color: const Color(0xFFF5E6D3),
+                color: const Color(0xFF312C51),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: const Row(
                 children: [
-                  Expanded(flex: 3, child: _HeaderText('Name')),
+                  Expanded(
+                      flex: 3,
+                      child: _HeaderText(
+                        'Name',
+                      )),
                   Expanded(flex: 3, child: _HeaderText('Room')),
                   Expanded(flex: 3, child: _HeaderText('Duration')),
                   Expanded(flex: 4, child: _HeaderText('Check In/out')),
@@ -217,7 +221,7 @@ class _HeaderText extends StatelessWidget {
       style: const TextStyle(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: Colors.black87,
+        color: Colors.white,
       ),
     );
   }
