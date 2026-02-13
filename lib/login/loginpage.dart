@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
-import 'package:hotelowner/dashboardpage.dart'; // Your MainDashboardPage
+import 'package:hotelowner/dashboard/dashboardpage.dart'; // Your MainDashboardPage
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart'; // Added
 

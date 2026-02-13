@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelowner/loginpage.dart'; // Keep your actual import
+import 'package:hotelowner/login/loginpage.dart'; // Keep your actual import
 
 class GetStartpage extends StatelessWidget {
   const GetStartpage({super.key});

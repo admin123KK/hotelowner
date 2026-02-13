@@ -53,7 +53,7 @@ class _ProductListPageState extends State<ProductListPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
+        title: const Row(
           children: [
             const Text(
               'Products',

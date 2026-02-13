@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hotelowner/get_startpage.dart';
+import 'package:hotelowner/login/get_startpage.dart';
 
 void main() {
   runApp(const MyApp());
