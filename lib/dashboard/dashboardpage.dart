@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
-import 'package:hotelowner/bookingpage.dart';
-import 'package:hotelowner/product/listpage.dart';
-import 'package:hotelowner/login/loginpage.dart';
-import 'package:hotelowner/product/productpage.dart';
+import 'package:hotelowner/dashboard/bookingpage.dart';
 import 'package:hotelowner/dashboard/roompage.dart';
 import 'package:hotelowner/dashboard/transctionspage.dart';
+import 'package:hotelowner/login/loginpage.dart';
+import 'package:hotelowner/product/listpage.dart';
+import 'package:hotelowner/product/productpage.dart';
+import 'package:hotelowner/purchase/addpurchasereturn.dart';
+import 'package:hotelowner/purchase/listpurchase.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -191,9 +193,9 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
             _buildDrawerItem(Icons.list_alt_outlined, 'Products List',
                 const ProductListPage()),
             _buildDrawerItem(Icons.add_card_outlined, 'Add Purchase Return',
-                const ProductListPage()),
-            _buildDrawerItem(Icons.add_card_outlined, 'List Purchase Return',
-                const ProductListPage()),
+                const AddPurchaseReturnPage()),
+            _buildDrawerItem(Icons.list, 'List Purchase Return',
+                const PurchaseReturnListPage()),
             _buildDrawerItem(Icons.settings, 'Setting', const SettingsPage()),
             _buildDrawerItem(Icons.book_online_outlined, 'Booking Detail',
                 const BookingPage()),
