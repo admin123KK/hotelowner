@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/bookingpage.dart';
+import 'package:hotelowner/listpage.dart';
 import 'package:hotelowner/loginpage.dart';
 import 'package:hotelowner/productpage.dart';
 import 'package:hotelowner/roompage.dart';
@@ -180,13 +181,15 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 ],
               ),
             ),
-            _buildDrawerItem(Icons.dashboard, 'Dashboard', MainDashboardPage()),
+            _buildDrawerItem(
+                Icons.dashboard, 'Dashboard', const MainDashboardPage()),
             _buildDrawerItem(Icons.hotel, 'Rooms', const RoomsPage()),
             _buildDrawerItem(
                 Icons.receipt_long, 'Transactions', const TransactionsPage()),
             _buildDrawerItem(Icons.download_for_offline_outlined, 'Add Prodcut',
                 const AddProductPage()),
-            _buildDrawerItem(Icons.bar_chart, 'Stats', const StatsPage()),
+            _buildDrawerItem(Icons.list_alt_outlined, 'Products List',
+                const ProductListPage()),
             _buildDrawerItem(Icons.settings, 'Setting', const SettingsPage()),
             _buildDrawerItem(Icons.book_online_outlined, 'Booking Detail',
                 const BookingPage()),
@@ -226,7 +229,6 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   }
 }
 
-// ===================== DASHBOARD HOME - FIXED RANGEERROR =====================
 class DashboardHome extends StatefulWidget {
   const DashboardHome({super.key});
 

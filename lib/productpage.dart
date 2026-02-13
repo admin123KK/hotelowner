@@ -11,6 +11,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers
+
   final _productNameController = TextEditingController();
   final _skuController = TextEditingController();
   final _alertQtyController = TextEditingController(text: '0');
