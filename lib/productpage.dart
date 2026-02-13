@@ -43,7 +43,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final subCategories = ['Sub A', 'Sub B'];
   final barcodeTypes = ['Code 128 (C128)', 'EAN-13', 'QR Code'];
 
-  final primaryColor = const Color(0xFFB1936B);
+  final primaryColor = const Color(0xFF312C51);
   final accentColor = const Color(0xFFF5E6D3);
   final greenColor = Colors.green.shade700;
 
@@ -58,10 +58,16 @@ class _AddProductPageState extends State<AddProductPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Add New Product',
-          style: TextStyle(
-              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        title: const Row(
+          children: [
+            Text(
+              'Add New Product',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         centerTitle: true,
         actions: const [SizedBox(width: 56)],
@@ -242,8 +248,14 @@ class _AddProductPageState extends State<AddProductPage> {
                             const SizedBox(height: 8),
                             ElevatedButton.icon(
                               onPressed: () {}, // TODO: image_picker
-                              icon: const Icon(Icons.image),
-                              label: const Text('Browse'),
+                              icon: const Icon(
+                                Icons.image,
+                                color: Colors.white,
+                              ),
+                              label: const Text(
+                                'Browse',
+                                style: TextStyle(color: Colors.white),
+                              ),
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryColor),
                             ),
@@ -254,22 +266,32 @@ class _AddProductPageState extends State<AddProductPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Product brochure',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed: () {}, // TODO: file_picker
-                              icon: const Icon(Icons.attach_file),
-                              label: const Text('Choose File'),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor),
-                            ),
-                          ],
+                      // const SizedBox(width: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Product brochure',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              const SizedBox(height: 8),
+                              ElevatedButton.icon(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  Icons.attach_file,
+                                  color: Colors.white,
+                                ),
+                                label: const Text(
+                                  'Choose File',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: primaryColor),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -334,8 +356,8 @@ class _AddProductPageState extends State<AddProductPage> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 12, horizontal: 16),
                           color: primaryColor.withOpacity(0.1),
-                          child: Row(
-                            children: const [
+                          child: const Row(
+                            children: [
                               Expanded(
                                   flex: 2,
                                   child: Text('Cost Price',
@@ -392,9 +414,16 @@ class _AddProductPageState extends State<AddProductPage> {
                               Expanded(
                                 child: ElevatedButton.icon(
                                   onPressed: () {}, // TODO: image picker
-                                  icon: const Icon(Icons.image, size: 18),
-                                  label: const Text('Choose',
-                                      style: TextStyle(fontSize: 12)),
+                                  icon: const Icon(
+                                    Icons.image,
+                                    size: 18,
+                                    color: Colors.white,
+                                  ),
+                                  label: const Text(
+                                    'Choose',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.white),
+                                  ),
                                   style: ElevatedButton.styleFrom(
                                       backgroundColor: primaryColor,
                                       padding: const EdgeInsets.symmetric(
@@ -415,16 +444,18 @@ class _AddProductPageState extends State<AddProductPage> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
-                          onPressed: () {}, // TODO: Save & add stock
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: primaryColor,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text('Save & Add Opening Stock',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14)),
+                          child: const Center(
+                            child: const Text('Save & Add\nOpening Stock',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14)),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -437,9 +468,11 @@ class _AddProductPageState extends State<AddProductPage> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: const Text('Save And Add Another',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14)),
+                          child: const Center(
+                            child: Text('Save & Add\nAnother',
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 14)),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -483,10 +516,10 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: TextStyle(
+      style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFFB1936B)),
+          color: const Color(0xFF312C51)),
     );
   }
 
@@ -524,7 +557,7 @@ class _AddProductPageState extends State<AddProductPage> {
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
         filled: true,
         fillColor: Colors.white,
       ),
@@ -544,7 +577,10 @@ class _AddProductPageState extends State<AddProductPage> {
           children: [
             Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
             IconButton(
-              icon: const Icon(Icons.add_circle, color: Color(0xFFB1936B)),
+              icon: const Icon(
+                Icons.add_circle,
+                color: Color(0xFF312C51),
+              ),
               onPressed: () {}, // TODO: Add new item logic
             ),
           ],
