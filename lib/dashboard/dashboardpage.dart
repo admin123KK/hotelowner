@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hotelowner/api.dart';
 import 'package:hotelowner/dashboard/bookingpage.dart';
+import 'package:hotelowner/dashboard/pospage.dart';
 import 'package:hotelowner/dashboard/roompage.dart';
 import 'package:hotelowner/dashboard/transctionspage.dart';
 import 'package:hotelowner/login/loginpage.dart';
@@ -196,6 +197,8 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 const AddPurchaseReturnPage()),
             _buildDrawerItem(Icons.list, 'List Purchase Return',
                 const PurchaseReturnListPage()),
+            _buildDrawerItem(
+                Icons.point_of_sale_sharp, 'POS ', const PosPage()),
             _buildDrawerItem(Icons.settings, 'Setting', const SettingsPage()),
             _buildDrawerItem(Icons.book_online_outlined, 'Booking Detail',
                 const BookingPage()),
