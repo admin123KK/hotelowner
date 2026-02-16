@@ -193,10 +193,10 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 const AddProductPage()),
             _buildDrawerItem(Icons.list_alt_outlined, 'Products List',
                 const ProductListPage()),
-            _buildDrawerItem(Icons.add_card_outlined, 'Add Purchase Return',
-                const AddPurchaseReturnPage()),
-            _buildDrawerItem(Icons.list, 'List Purchase Return',
-                const PurchaseReturnListPage()),
+            _buildDrawerItem(
+                Icons.list, 'List Purchase ', const PurchaseListPage()),
+            _buildDrawerItem(Icons.add_card_outlined, 'Add Purchase',
+                const AddPurchasePage()),
             _buildDrawerItem(
                 Icons.point_of_sale_sharp, 'POS ', const PosPage()),
             _buildDrawerItem(Icons.settings, 'Setting', const SettingsPage()),
