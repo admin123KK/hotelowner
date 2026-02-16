@@ -11,6 +11,7 @@ import 'package:hotelowner/product/listpage.dart';
 import 'package:hotelowner/product/productpage.dart';
 import 'package:hotelowner/purchase/addpurchasereturn.dart';
 import 'package:hotelowner/purchase/listpurchase.dart';
+import 'package:hotelowner/sell/allsellpage.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -214,6 +215,8 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
                 const AddPurchasePage()),
             _buildDrawerItem(
                 Icons.point_of_sale_sharp, 'POS ', const PosPage()),
+            _buildDrawerItem(Icons.production_quantity_limits_sharp,
+                'All Sales ', const SellListPage()),
             _buildDrawerItem(Icons.settings, 'Setting', const SettingsPage()),
             _buildDrawerItem(Icons.book_online_outlined, 'Booking Detail',
                 const BookingPage()),
