@@ -126,10 +126,25 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
     return Scaffold(
       appBar: _currentPage.runtimeType == DashboardHome
           ? AppBar(
-              title: const Text(
-                'Beyond 360',
-                style:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Beyond 360',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => PosPage()));
+                    },
+                    child: const Icon(
+                      Icons.point_of_sale_outlined,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
               ),
               backgroundColor: const Color(0xFF312C51),
               elevation: 0,

@@ -21,8 +21,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
   String? selectedTdsType = 'Please Select';
 
   DateTime purchaseDate = DateTime.now();
-  String purchaseDateBS =
-      '2082-11-04'; // Example - you can integrate real BS converter later
+  String purchaseDateBS = '2082-11-04';
 
   double subTotal = 0.0;
   double nonTaxableAmount = 0.0;

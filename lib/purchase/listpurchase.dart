@@ -74,9 +74,9 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
+        title: const Row(
           children: [
-            const Text(
+            Text(
               'Purchases',
               style: TextStyle(
                   color: Colors.white,
@@ -229,7 +229,7 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
                                 // 3-dot menu
                                 PopupMenuButton<String>(
                                   icon: const Icon(Icons.more_vert,
-                                      color: Color(0xFFB1936B)),
+                                      color: Color(0xFF312C51)),
                                   onSelected: (value) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
