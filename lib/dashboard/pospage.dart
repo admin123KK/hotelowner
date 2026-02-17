@@ -25,9 +25,6 @@ class _PosPageState extends State<PosPage> {
   final primaryColor = const Color(0xFF312C51);
   final accentColor = const Color(0xFFF5E6D3);
 
-  // ────────────────────────────────────────────────
-  // Cart Operations
-  // ────────────────────────────────────────────────
   void _addToCart(String name, double price) {
     setState(() {
       final existing = _cart.firstWhere(
@@ -193,7 +190,7 @@ class _PosPageState extends State<PosPage> {
                       ),
                     ),
 
-                    // Bottom: Cart Summary (full width on small screens)
+// Bottom: Cart Summary (full width on small screens)
                     Expanded(
                       flex: 2,
                       child: Container(
@@ -267,7 +264,7 @@ class _PosPageState extends State<PosPage> {
                                                       fontSize:
                                                           fontSizeProduct)),
                                               IconButton(
-                                                icon: Icon(
+                                                icon: const Icon(
                                                     Icons.add_circle_outline,
                                                     color: Colors.green,
                                                     size: 24),
@@ -432,7 +429,6 @@ class _PosPageState extends State<PosPage> {
                       ),
                     ),
 
-                    // Right: Cart (larger on big screens)
                     Expanded(
                       flex: 2,
                       child: Container(
