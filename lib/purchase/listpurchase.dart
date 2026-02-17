@@ -8,10 +8,10 @@ class PurchaseListPage extends StatefulWidget {
 }
 
 class _PurchaseListPageState extends State<PurchaseListPage> {
-  final primaryColor = const Color(0xFF312C51);
+  final primaryColor = const Color(0xFF312C51); // your dark purple/brown
   final accentColor = const Color(0xFFF5E6D3);
 
-  // Data from your Purchase List screenshot
+  // Data from your screenshot
   final List<Map<String, dynamic>> purchases = [
     {
       'date': '18-02-2026 11:57',
@@ -74,16 +74,10 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Row(
-          children: [
-            Text(
-              'Purchases',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
-            ),
-          ],
+        title: const Text(
+          'Purchases',
+          style: TextStyle(
+              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: const [SizedBox(width: 56)],
@@ -108,15 +102,15 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
                 child: Row(
                   children: [
-                    Icon(Icons.receipt_long, color: primaryColor, size: 32),
-                    const SizedBox(width: 12),
+                    Icon(Icons.receipt_long, color: primaryColor, size: 28),
+                    const SizedBox(width: 10),
                     Text(
                       'Purchase List',
                       style: TextStyle(
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: primaryColor,
                       ),
@@ -125,128 +119,152 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
                 ),
               ),
 
-              // List of Purchase Cards
+              // Compact Card List
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: purchases.length,
                   itemBuilder: (context, index) {
-                    final purchase = purchases[index];
+                    final p = purchases[index];
                     return Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.only(bottom: 16),
+                      elevation: 2,
+                      margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
+                          borderRadius: BorderRadius.circular(12)),
                       child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
+                        padding: const EdgeInsets.all(12.0), // tighter padding
+                        child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Placeholder image (like product list)
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Container(
-                                    width: 80,
-                                    height: 80,
-                                    color: Colors.grey.shade200,
-                                    child: const Icon(
-                                      Icons.receipt,
-                                      size: 40,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
+                            // Small icon/image placeholder
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey.shade200,
+                                child: const Icon(Icons.receipt,
+                                    size: 30, color: Colors.grey),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
 
-                                // Main content
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                            // Main content – everything squeezed horizontally
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // First line: Bill No + Grand Total
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        purchase['billNo'],
+                                        p['billNo'],
                                         style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      const SizedBox(height: 6),
                                       Text(
-                                        purchase['location'],
+                                        p['grandTotal'],
                                         style: const TextStyle(
-                                            fontSize: 14, color: Colors.grey),
-                                      ),
-                                      const SizedBox(height: 12),
-
-                                      // Purchase details in two columns
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                _buildInfoRow(
-                                                    'Date', purchase['date']),
-                                                _buildInfoRow('Supplier',
-                                                    purchase['supplier']),
-                                                _buildInfoRow('Purchase Status',
-                                                    purchase['purchaseStatus']),
-                                                _buildInfoRow('Payment Status',
-                                                    purchase['paymentStatus']),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(width: 24),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                _buildInfoRow('Grand Total',
-                                                    purchase['grandTotal']),
-                                                _buildInfoRow('Purchase',
-                                                    purchase['purchase']),
-                                                _buildInfoRow('Payment Due',
-                                                    purchase['paymentDue']),
-                                                _buildInfoRow('Added By',
-                                                    purchase['addedBy']),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFFB1936B)),
                                       ),
                                     ],
                                   ),
-                                ),
+                                  const SizedBox(height: 4),
 
-                                // 3-dot menu
-                                PopupMenuButton<String>(
-                                  icon: const Icon(Icons.more_vert,
-                                      color: Color(0xFF312C51)),
-                                  onSelected: (value) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text('Selected: $value')),
-                                    );
-                                  },
-                                  itemBuilder: (context) => [
-                                    const PopupMenuItem(
-                                        value: 'View', child: Text('View')),
-                                    const PopupMenuItem(
-                                        value: 'Edit', child: Text('Edit')),
-                                    const PopupMenuItem(
-                                        value: 'Delete', child: Text('Delete')),
-                                    const PopupMenuItem(
-                                        value: 'Print', child: Text('Print')),
-                                  ],
-                                ),
+                                  // Supplier + Location (single line)
+                                  Text(
+                                    "${p['supplier']} • ${p['location']}",
+                                    style: const TextStyle(
+                                        fontSize: 13, color: Colors.grey),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 4),
+
+                                  // Date + Added By (single line)
+                                  Text(
+                                    "${p['date']} • Added by ${p['addedBy']}",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.grey[700]),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 6),
+
+                                  // Status badges + Payment Due (compact)
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.green.withOpacity(0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          p['purchaseStatus'],
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              Colors.orange.withOpacity(0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          p['paymentStatus'],
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.orange,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        "Due: ${p['paymentDue']}",
+                                        style: const TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // 3-dot menu
+                            PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert,
+                                  color: Color(0xFF312C51), size: 24),
+                              onSelected: (value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Selected: $value')),
+                                );
+                              },
+                              itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                    value: 'View', child: Text('View')),
+                                const PopupMenuItem(
+                                    value: 'Edit', child: Text('Edit')),
+                                const PopupMenuItem(
+                                    value: 'Delete', child: Text('Delete')),
+                                const PopupMenuItem(
+                                    value: 'Print', child: Text('Print')),
                               ],
                             ),
                           ],
@@ -259,29 +277,6 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '$label: ',
-            style: const TextStyle(fontSize: 13, color: Colors.grey),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
       ),
     );
   }

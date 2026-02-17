@@ -11,7 +11,6 @@ class _SellListPageState extends State<SellListPage> {
   final primaryColor = const Color(0xFF312C51);
   final accentColor = const Color(0xFFF5E6D3);
 
-  // Demo data based on your screenshot (you can replace with real API)
   final List<Map<String, dynamic>> sales = [
     {
       'invoiceNo': '2026-000021',
@@ -32,7 +31,6 @@ class _SellListPageState extends State<SellListPage> {
       'staffNote': '',
       'shippingDetails': '',
     },
-    // Add more demo entries if needed
     {
       'invoiceNo': '2026-000022',
       'customerName': 'Mr. Rajesh Sharma',
@@ -116,8 +114,6 @@ class _SellListPageState extends State<SellListPage> {
                   ],
                 ),
               ),
-
-              // Sales List
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
