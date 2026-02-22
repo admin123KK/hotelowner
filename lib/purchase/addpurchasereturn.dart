@@ -8,9 +8,7 @@ class AddPurchasePage extends StatefulWidget {
 }
 
 class _AddPurchasePageState extends State<AddPurchasePage> {
-  // Form controllers
   final _billNoController = TextEditingController();
-  final _supplierController = TextEditingController();
   final _addressController = TextEditingController();
   final _searchProductController = TextEditingController();
 
@@ -31,14 +29,19 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
   double additionalShipping = 0.0;
   double tdsAmount = 0.0;
 
-  // Dummy products in cart (you can add real ones)
   final List<Map<String, dynamic>> cartProducts = [];
 
   final primaryColor = const Color(0xFF312C51);
-  final accentColor = const Color(0xFFF5E6D3);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 400;
+
+    final double padding = isSmallScreen ? 12.0 : 16.0;
+    final double spacing = isSmallScreen ? 12.0 : 16.0;
+    final double fontSize = isSmallScreen ? 14.0 : 16.0;
+
     return Scaffold(
       backgroundColor: primaryColor,
       appBar: AppBar(
@@ -48,16 +51,10 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Row(
-          children: [
-            Text(
-              'Add Purchase',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
-            ),
-          ],
+        title: const Text(
+          'Add Purchase',
+          style: TextStyle(
+              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: const [SizedBox(width: 56)],
@@ -76,54 +73,54 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
             ],
           ),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.all(padding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // First Section: Supplier, Bill No, Dates, Status, Location, Pay Term
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(padding),
                     child: Column(
                       children: [
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: _buildDropdown(
-                                  'Supplier*',
-                                  selectedSupplier,
-                                  [
-                                    'Please Select',
-                                    'Vianet Communication Ltd.',
-                                    'Technovate Intl.',
-                                    'Escanc Nepal'
-                                  ],
-                                  (val) =>
-                                      setState(() => selectedSupplier = val),
-                                  true),
+                                'Supplier*',
+                                selectedSupplier,
+                                [
+                                  'Please Select',
+                                  'Vianet Communication Ltd.',
+                                  'Technovate Intl.',
+                                  'Escanc Nepal'
+                                ],
+                                (val) => setState(() => selectedSupplier = val),
+                              ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: spacing),
                             Expanded(
                               child: _buildTextField(
-                                  'Bill No:*', _billNoController, 'Bill No'),
+                                'Bill No:*',
+                                _billNoController,
+                                'Bill No',
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: spacing),
                         Row(
                           children: [
                             Expanded(
                               child: _buildDatePicker(
                                   'Purchase Date:*',
                                   purchaseDate,
-                                  (date) =>
-                                      setState(() => purchaseDate = date)),
+                                  (date) => setState(() => purchaseDate = date),
+                                  fontSize),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: spacing),
                             Expanded(
                               child: _buildTextField(
                                   'Purchase Date BS:*',
@@ -133,89 +130,83 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: spacing),
                         Row(
                           children: [
                             Expanded(
                               child: _buildDropdown(
-                                  'Purchase Status:*',
-                                  selectedPurchaseStatus,
-                                  [
-                                    'Please Select',
-                                    'Received',
-                                    'Pending',
-                                    'Ordered'
-                                  ],
-                                  (val) => setState(
-                                      () => selectedPurchaseStatus = val),
-                                  true),
+                                'Purchase Status:*',
+                                selectedPurchaseStatus,
+                                [
+                                  'Please Select',
+                                  'Received',
+                                  'Pending',
+                                  'Ordered'
+                                ],
+                                (val) => setState(
+                                    () => selectedPurchaseStatus = val),
+                              ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: spacing),
                             Expanded(
                               child: _buildDropdown(
-                                  'Business Location:*',
-                                  selectedBusinessLocation,
-                                  [
-                                    'Beyond Tech Nepal Pvt. Ltd. (BL0001)',
-                                    'Branch 2'
-                                  ],
-                                  (val) => setState(
-                                      () => selectedBusinessLocation = val),
-                                  true),
+                                'Business Location:*',
+                                selectedBusinessLocation,
+                                [
+                                  'Beyond Tech Nepal Pvt. Ltd. (BL0001)',
+                                  'Branch 2'
+                                ],
+                                (val) => setState(
+                                    () => selectedBusinessLocation = val),
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: spacing),
                         Row(
                           children: [
                             Expanded(
                               child: _buildDropdown(
-                                  'Pay term:',
-                                  selectedPayTerm,
-                                  ['Please Select', 'Cash', 'Credit 30 days'],
-                                  (val) =>
-                                      setState(() => selectedPayTerm = val)),
+                                'Pay term:',
+                                selectedPayTerm,
+                                ['Please Select', 'Cash', 'Credit 30 days'],
+                                (val) => setState(() => selectedPayTerm = val),
+                                fontSize: fontSize,
+                              ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: spacing),
                             Expanded(
                               child: _buildTextField(
-                                  'Address:', _addressController, 'Address'),
+                                'Address:',
+                                _addressController,
+                                'Address',
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-                        Row(
+                        SizedBox(height: spacing),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Attach Document:',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 8),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      // TODO: File picker
-                                    },
-                                    icon: const Icon(
-                                      Icons.attach_file,
-                                      color: Colors.white,
-                                    ),
-                                    label: const Text(
-                                      'Browse',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: primaryColor),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                      'Max File size: 5MB\nAllowed File: .pdf, .csv, .zip, .doc, .docx, .jpeg, .jpg, .png',
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
-                                ],
-                              ),
+                            Text('Attach Document:',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: fontSize)),
+                            SizedBox(height: 8),
+                            ElevatedButton.icon(
+                              onPressed: () {},
+                              icon: const Icon(Icons.attach_file,
+                                  color: Colors.white),
+                              label: const Text('Browse',
+                                  style: TextStyle(color: Colors.white)),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Max File size: 5MB\nAllowed File: .pdf, .csv, .zip, .doc, .docx, .jpeg, .jpg, .png',
+                              style: TextStyle(
+                                  fontSize: fontSize - 2, color: Colors.grey),
                             ),
                           ],
                         ),
@@ -223,30 +214,27 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                // Import Products Section
+                SizedBox(height: spacing),
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(padding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           children: [
                             ElevatedButton.icon(
-                              onPressed: () {
-                                // TODO: Import products
-                              },
+                              onPressed: () {},
                               icon: const Icon(Icons.upload_file),
                               label: const Text('Import Products'),
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.red,
                                   foregroundColor: Colors.white),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: spacing),
                             Expanded(
                               child: TextField(
                                 controller: _searchProductController,
@@ -257,94 +245,97 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                                   suffixIcon: IconButton(
                                     icon: const Icon(Icons.add_circle,
                                         color: Colors.blue),
-                                    onPressed: () {
-                                      // TODO: Add new product dialog
-                                    },
+                                    onPressed: () {},
                                   ),
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12)),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 10),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
-
-                        // Cart Table Header
+                        SizedBox(height: spacing),
                         Container(
                           color: Colors.green.shade700,
                           padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          child: const Row(
+                              vertical: 10, horizontal: 12),
+                          child: Row(
                             children: [
                               SizedBox(
-                                  width: 40,
+                                  width: 30,
                                   child: Text('#',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
                               Expanded(
                                   flex: 4,
                                   child: Text('Product Name',
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
                               Expanded(
                                   flex: 1,
                                   child: Text('Qty',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
                               Expanded(
                                   flex: 2,
                                   child: Text('Rate',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
                               Expanded(
                                   flex: 2,
                                   child: Text('Discount',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
                               Expanded(
                                   flex: 2,
                                   child: Text('Tax',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
                               Expanded(
                                   flex: 2,
                                   child: Text('Amount',
                                       textAlign: TextAlign.right,
                                       style: TextStyle(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.bold))),
-                              SizedBox(width: 40),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: fontSize - 2))),
+                              const SizedBox(width: 30),
                             ],
                           ),
                         ),
-
-                        // Cart Items (empty for now)
                         SizedBox(
-                          height: 200,
+                          height: MediaQuery.of(context).size.height * 0.35,
                           child: cartProducts.isEmpty
                               ? Center(
                                   child: Text('No products added yet',
                                       style: TextStyle(
-                                          color: Colors.grey.shade600)),
-                                )
+                                          color: Colors.grey.shade600,
+                                          fontSize: fontSize - 2)))
                               : ListView.builder(
                                   itemCount: cartProducts.length,
                                   itemBuilder: (context, index) {
                                     final item = cartProducts[index];
                                     return Container(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 12, horizontal: 16),
+                                          vertical: 8, horizontal: 12),
                                       decoration: BoxDecoration(
                                           border: Border(
                                               bottom: BorderSide(
@@ -353,61 +344,73 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                                       child: Row(
                                         children: [
                                           SizedBox(
-                                              width: 40,
-                                              child: Text('${index + 1}')),
+                                              width: 30,
+                                              child: Text('${index + 1}',
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
                                           Expanded(
                                               flex: 4,
-                                              child: Text(item['name'])),
+                                              child: Text(
+                                                  item['name'] ?? 'Product',
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
                                           Expanded(
                                               flex: 1,
                                               child: TextField(
                                                   decoration:
                                                       const InputDecoration(
-                                                          border: InputBorder
-                                                              .none),
+                                                          border:
+                                                              InputBorder.none),
                                                   textAlign: TextAlign.center,
                                                   controller:
                                                       TextEditingController(
-                                                          text: item['qty']
-                                                              .toString()))),
+                                                          text: '1'),
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
                                           Expanded(
                                               flex: 2,
                                               child: TextField(
                                                   decoration:
                                                       const InputDecoration(
-                                                          border: InputBorder
-                                                              .none),
+                                                          border:
+                                                              InputBorder.none),
                                                   textAlign: TextAlign.right,
                                                   controller:
                                                       TextEditingController(
-                                                          text: item['price']
-                                                              .toStringAsFixed(
-                                                                  2)))),
-                                          const Expanded(
-                                              flex: 2,
-                                              child: TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                  textAlign: TextAlign.right)),
-                                          const Expanded(
-                                              flex: 2,
-                                              child: TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                  textAlign: TextAlign.right)),
+                                                          text: '0.00'),
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
                                           Expanded(
                                               flex: 2,
-                                              child: Text(
-                                                  'Rs. ${(item['qty'] * item['price']).toStringAsFixed(2)}',
-                                                  textAlign: TextAlign.right)),
+                                              child: TextField(
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
+                                          Expanded(
+                                              flex: 2,
+                                              child: TextField(
+                                                  decoration:
+                                                      const InputDecoration(
+                                                          border:
+                                                              InputBorder.none),
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
+                                          Expanded(
+                                              flex: 2,
+                                              child: Text('Rs. 0.00',
+                                                  textAlign: TextAlign.right,
+                                                  style: TextStyle(
+                                                      fontSize: fontSize - 2))),
                                           IconButton(
                                               icon: const Icon(
                                                   Icons.delete_outline,
-                                                  color: Colors.red),
+                                                  color: Colors.red,
+                                                  size: 20),
                                               onPressed: () {}),
                                         ],
                                       ),
@@ -415,10 +418,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                                   },
                                 ),
                         ),
-
-                        const SizedBox(height: 16),
-
-                        // Summary
+                        SizedBox(height: spacing),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -426,18 +426,22 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                    'Subtotal: Rs ${subTotal.toStringAsFixed(2)}'),
+                                    'Subtotal: Rs ${subTotal.toStringAsFixed(2)}',
+                                    style: TextStyle(fontSize: fontSize)),
                                 Text(
-                                    'Non-Taxable Amount: Rs ${nonTaxableAmount.toStringAsFixed(2)}'),
+                                    'Non-Taxable Amount: Rs ${nonTaxableAmount.toStringAsFixed(2)}',
+                                    style: TextStyle(fontSize: fontSize - 2)),
                                 Text(
-                                    'Taxable Amount: Rs ${taxableAmount.toStringAsFixed(2)}'),
-                                Text('VAT: Rs ${taxAmount.toStringAsFixed(2)}'),
+                                    'Taxable Amount: Rs ${taxableAmount.toStringAsFixed(2)}',
+                                    style: TextStyle(fontSize: fontSize - 2)),
+                                Text('VAT: Rs ${taxAmount.toStringAsFixed(2)}',
+                                    style: TextStyle(fontSize: fontSize - 2)),
                                 Text(
                                     'Grand Total: Rs ${grandTotal.toStringAsFixed(2)}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Color(0xFFB1936B))),
+                                        fontSize: fontSize + 2,
+                                        color: primaryColor)),
                               ],
                             ),
                           ],
@@ -446,61 +450,60 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 24),
-
-                // Shipping Details & TDS
+                SizedBox(height: spacing),
                 Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: EdgeInsets.all(padding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Shipping Details:',
+                        Text('Shipping Details:',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        const SizedBox(height: 12),
+                                fontWeight: FontWeight.bold,
+                                fontSize: fontSize + 2)),
+                        SizedBox(height: spacing),
                         Row(
                           children: [
                             Expanded(
                               child: _buildTextField(
-                                  'Additional Shipping charges:',
-                                  TextEditingController(
-                                      text: additionalShipping
-                                          .toStringAsFixed(0)),
-                                  '0',
-                                  keyboardType: TextInputType.number),
+                                'Additional Shipping charges:',
+                                TextEditingController(
+                                    text:
+                                        additionalShipping.toStringAsFixed(0)),
+                                '0',
+                                keyboardType: TextInputType.number,
+                              ),
                             ),
-                            const SizedBox(width: 16),
+                            SizedBox(width: spacing),
                             Expanded(
                               child: _buildDropdown(
-                                  'TDS Type:',
-                                  selectedTdsType,
-                                  ['Please Select', 'TDS 1.5%', 'TDS 15%'],
-                                  (val) =>
-                                      setState(() => selectedTdsType = val)),
+                                'TDS Type:',
+                                selectedTdsType,
+                                ['Please Select', 'TDS 1.5%', 'TDS 15%'],
+                                (val) => setState(() => selectedTdsType = val),
+                                fontSize: fontSize,
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: spacing),
                         Row(
                           children: [
                             Expanded(
                               child: _buildTextField(
-                                  'TDS Amount:',
-                                  TextEditingController(
-                                      text: tdsAmount.toStringAsFixed(2)),
-                                  '0.00',
-                                  keyboardType: TextInputType.number),
+                                'TDS Amount:',
+                                TextEditingController(
+                                    text: tdsAmount.toStringAsFixed(2)),
+                                '0.00',
+                                keyboardType: TextInputType.number,
+                              ),
                             ),
                             const Spacer(),
                             ElevatedButton.icon(
-                              onPressed: () {
-                                // TODO: Add additional expenses
-                              },
+                              onPressed: () {},
                               icon: const Icon(Icons.add, size: 18),
                               label: const Text('Add additional expenses'),
                               style: ElevatedButton.styleFrom(
@@ -513,30 +516,26 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                     ),
                   ),
                 ),
-
-                const SizedBox(height: 32),
-
-                // Save Button (example)
+                SizedBox(height: spacing * 2),
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Save purchase logic
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Purchase Saved!')));
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 48, vertical: 16),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.35, vertical: 14),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text('Save Purchase',
-                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                    child: Text('Save Purchase',
+                        style: TextStyle(
+                            fontSize: fontSize + 2, color: Colors.white)),
                   ),
                 ),
-
-                const SizedBox(height: 40),
+                SizedBox(height: spacing * 3),
               ],
             ),
           ),
@@ -546,23 +545,29 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
   }
 
   Widget _buildTextField(
-      String label, TextEditingController controller, String hint,
-      {TextInputType keyboardType = TextInputType.text,
-      bool readOnly = false}) {
+    String label,
+    TextEditingController controller,
+    String hint, {
+    TextInputType keyboardType = TextInputType.text,
+    bool readOnly = false,
+    double fontSize = 16.0,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize)),
+        const SizedBox(height: 6),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
           readOnly: readOnly,
+          style: TextStyle(fontSize: fontSize - 1),
           decoration: InputDecoration(
             hintText: hint,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             filled: true,
             fillColor: Colors.grey.shade50,
           ),
@@ -571,24 +576,31 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
     );
   }
 
-  Widget _buildDropdown(String label, String? value, List<String> items,
-      ValueChanged<String?> onChanged,
-      [bool isRequired = false]) {
+  Widget _buildDropdown(
+    String label,
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged, {
+    bool isRequired = false,
+    double fontSize = 16.0,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize)),
+        SizedBox(height: 6),
         DropdownButtonFormField<String>(
           value: value,
           items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: TextStyle(fontSize: fontSize - 1))))
               .toList(),
           onChanged: onChanged,
           decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             filled: true,
             fillColor: Colors.grey.shade50,
           ),
@@ -598,12 +610,13 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
   }
 
   Widget _buildDatePicker(String label, DateTime initialDate,
-      ValueChanged<DateTime> onDateSelected) {
+      ValueChanged<DateTime> onDateSelected, double fontSize) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
+        Text(label,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize)),
+        SizedBox(height: 6),
         InkWell(
           onTap: () async {
             final picked = await showDatePicker(
@@ -619,14 +632,16 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
           child: InputDecorator(
             decoration: InputDecoration(
               border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               filled: true,
               fillColor: Colors.grey.shade50,
             ),
             child: Text(
-                '${initialDate.day}-${initialDate.month}-${initialDate.year}'),
+              '${initialDate.day}-${initialDate.month}-${initialDate.year}',
+              style: TextStyle(fontSize: fontSize - 1),
+            ),
           ),
         ),
       ],
@@ -635,7 +650,9 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
 
   @override
   void dispose() {
-    // Dispose controllers if you add more
+    _billNoController.dispose();
+    _addressController.dispose();
+    _searchProductController.dispose();
     super.dispose();
   }
 }

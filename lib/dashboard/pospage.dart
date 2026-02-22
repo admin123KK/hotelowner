@@ -879,7 +879,7 @@ class _PosPageState extends State<PosPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            Text(
+                            const Text(
                               'Payable:',
                               style: TextStyle(
                                   color: Colors.white70, fontSize: 12),
@@ -916,7 +916,7 @@ class _PosPageState extends State<PosPage> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(color: Colors.white, fontSize: 11),
+            style: const TextStyle(color: Colors.white, fontSize: 11),
           ),
         ],
       ),
