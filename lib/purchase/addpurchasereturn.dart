@@ -223,9 +223,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
                 // Import Products Section
                 Card(
                   elevation: 2,
@@ -385,7 +383,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                                                           text: item['price']
                                                               .toStringAsFixed(
                                                                   2)))),
-                                          Expanded(
+                                          const Expanded(
                                               flex: 2,
                                               child: TextField(
                                                   decoration:
@@ -393,7 +391,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                                                           border:
                                                               InputBorder.none),
                                                   textAlign: TextAlign.right)),
-                                          Expanded(
+                                          const Expanded(
                                               flex: 2,
                                               child: TextField(
                                                   decoration:

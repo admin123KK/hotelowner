@@ -8,10 +8,9 @@ class PurchaseListPage extends StatefulWidget {
 }
 
 class _PurchaseListPageState extends State<PurchaseListPage> {
-  final primaryColor = const Color(0xFF312C51); // your dark purple/brown
+  final primaryColor = const Color(0xFF312C51);
   final accentColor = const Color(0xFFF5E6D3);
 
-  // Data from your screenshot
   final List<Map<String, dynamic>> purchases = [
     {
       'date': '18-02-2026 11:57',
