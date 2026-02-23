@@ -30,7 +30,6 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
   double tdsAmount = 0.0;
 
   final List<Map<String, dynamic>> cartProducts = [];
-
   final primaryColor = const Color(0xFF312C51);
 
   @override
@@ -192,7 +191,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: fontSize)),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             ElevatedButton.icon(
                               onPressed: () {},
                               icon: const Icon(Icons.attach_file,
@@ -202,7 +201,7 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
                               style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryColor),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               'Max File size: 5MB\nAllowed File: .pdf, .csv, .zip, .doc, .docx, .jpeg, .jpg, .png',
                               style: TextStyle(

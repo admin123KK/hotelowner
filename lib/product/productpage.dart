@@ -1,3 +1,7 @@
+// ────────────────────────────────────────────────
+//  Improved spacing & layout version
+// ────────────────────────────────────────────────
+
 import 'package:flutter/material.dart';
 
 class AddProductPage extends StatefulWidget {
@@ -10,8 +14,7 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
-
+  // Controllers (unchanged)
   final _productNameController = TextEditingController();
   final _skuController = TextEditingController();
   final _alertQtyController = TextEditingController(text: '0');
@@ -22,13 +25,15 @@ class _AddProductPageState extends State<AddProductPage> {
   final _marginController = TextEditingController(text: '25.00');
   final _saleExcTaxController = TextEditingController();
 
-  // Selections
+  // Selections (unchanged)
   String? _unit,
       _brand,
       _category,
       _subCategory,
       _barcodeType = 'Code 128 (C128)';
-  List<String> _businessLocations = ['Beyond Tech Nepal Pvt. Ltd. (BL0001)'];
+  final List<String> _businessLocations = [
+    'Beyond Tech Nepal Pvt. Ltd. (BL0001)'
+  ];
   bool _enablePOS = true;
   bool _manageStock = true;
   bool _isService = false;
@@ -37,7 +42,6 @@ class _AddProductPageState extends State<AddProductPage> {
   String? _sellingTaxType = 'Exclusive';
   String? _productType = 'Single';
 
-  // Dummy options (replace with API later)
   final units = ['Piece', 'Kg', 'Liter', 'Box'];
   final brands = ['Brand A', 'Brand B'];
   final categories = ['Food', 'Beverage', 'Housekeeping'];
@@ -64,84 +68,77 @@ class _AddProductPageState extends State<AddProductPage> {
             Text(
               'Add New Product',
               style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),
         centerTitle: true,
-        actions: const [SizedBox(width: 56)],
       ),
       body: SafeArea(
         child: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(40),
-              topRight: Radius.circular(40),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(36)),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black12, blurRadius: 20, offset: Offset(0, -5)),
+                  color: Colors.black12, blurRadius: 20, offset: Offset(0, -8)),
             ],
           ),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(20, 28, 20, 40),
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Basic Information Section
                   _buildSectionHeader('Basic Information'),
+                  const SizedBox(height: 24),
+
+                  _buildTextField('Product Name*', _productNameController,
+                      isRequired: true),
+                  const SizedBox(height: 16),
+                  _buildTextField('SKU', _skuController),
                   const SizedBox(height: 16),
 
+                  _buildDropdown('Barcode Type*', _barcodeType, barcodeTypes,
+                      (v) => setState(() => _barcodeType = v),
+                      isRequired: true),
+                  const SizedBox(height: 24),
+
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                          child: _buildTextField(
-                              'Product Name*', _productNameController,
-                              isRequired: true)),
-                      const SizedBox(width: 12),
-                      Expanded(child: _buildTextField('SKU', _skuController)),
+                        child: _buildDropdownWithAdd('Unit*', _unit, units,
+                            (v) => setState(() => _unit = v),
+                            isRequired: true),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _buildDropdownWithAdd('Brand', _brand, brands,
+                            (v) => setState(() => _brand = v)),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 16),
 
-                  Row(
-                    children: [
-                      Expanded(
-                          child: _buildDropdown('Barcode Type*', _barcodeType,
-                              barcodeTypes, (v) => _barcodeType = v,
-                              isRequired: true)),
-                    ],
-                  ),
+                  _buildDropdownWithAdd('Category*', _category, categories,
+                      (v) => setState(() => _category = v),
+                      isRequired: true),
                   const SizedBox(height: 16),
 
-                  Row(
-                    children: [
-                      Expanded(
-                          child: _buildDropdownWithAdd(
-                              'Unit*', _unit, units, (v) => _unit = v,
-                              isRequired: true)),
-                      const SizedBox(width: 12),
-                      Expanded(
-                          child: _buildDropdownWithAdd(
-                              'Brand', _brand, brands, (v) => _brand = v)),
-                      const SizedBox(width: 12),
-                      Expanded(
-                          child: _buildDropdownWithAdd('Category*', _category,
-                              categories, (v) => _category = v,
-                              isRequired: true)),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
+                  _buildDropdown('Sub category', _subCategory, subCategories,
+                      (v) => setState(() => _subCategory = v)),
+                  const SizedBox(height: 24),
 
-                  Row(
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 12,
                     children: [
-                      Expanded(
+                      SizedBox(
+                        width: 180,
                         child: CheckboxListTile(
                           title: const Text('Enable for POS'),
                           value: _enablePOS,
@@ -152,8 +149,8 @@ class _AddProductPageState extends State<AddProductPage> {
                           contentPadding: EdgeInsets.zero,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
+                      SizedBox(
+                        width: 180,
                         child: CheckboxListTile(
                           title: const Text('Manage Stock'),
                           value: _manageStock,
@@ -164,13 +161,8 @@ class _AddProductPageState extends State<AddProductPage> {
                           contentPadding: EdgeInsets.zero,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  Row(
-                    children: [
-                      Expanded(
+                      SizedBox(
+                        width: 180,
                         child: CheckboxListTile(
                           title: const Text('Is Service'),
                           value: _isService,
@@ -183,43 +175,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-
-                  Row(
-                    children: [
-                      Expanded(
-                          child: _buildDropdown('Sub category', _subCategory,
-                              subCategories, (v) => _subCategory = v)),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Business Locations',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8,
-                              children: _businessLocations
-                                  .map((loc) => Chip(
-                                        label: Text(loc,
-                                            style:
-                                                const TextStyle(fontSize: 12)),
-                                        backgroundColor:
-                                            primaryColor.withOpacity(0.2),
-                                        deleteIcon:
-                                            const Icon(Icons.close, size: 16),
-                                        onDeleted: () => setState(() =>
-                                            _businessLocations.remove(loc)),
-                                      ))
-                                  .toList(),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
                   Row(
                     children: [
@@ -227,7 +183,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           child: _buildTextField(
                               'Alert quantity', _alertQtyController,
                               keyboardType: TextInputType.number)),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Expanded(
                           child: _buildTextField('HS Code', _hsCodeController)),
                     ],
@@ -236,9 +192,11 @@ class _AddProductPageState extends State<AddProductPage> {
 
                   _buildTextField('Product Description', _descriptionController,
                       maxLines: 4),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
+                  // ── Images / Files ───────────────────────────────
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Column(
@@ -246,64 +204,35 @@ class _AddProductPageState extends State<AddProductPage> {
                           children: [
                             const Text('Product image',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 12),
+                            _buildUploadButton(Icons.image, 'Browse'),
                             const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed: () {}, // TODO: image_picker
-                              icon: const Icon(
-                                Icons.image,
-                                color: Colors.white,
-                              ),
-                              label: const Text(
-                                'Browse',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor),
-                            ),
-                            const SizedBox(height: 4),
-                            const Text('Max size 5MB\nAspect ratio 1:1',
+                            const Text('Max 5MB  •  1:1',
                                 style: TextStyle(
-                                    fontSize: 12, color: Colors.grey)),
+                                    fontSize: 13, color: Colors.grey)),
                           ],
                         ),
                       ),
-                      // const SizedBox(width: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('Product brochure',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 8),
-                              ElevatedButton.icon(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.attach_file,
-                                  color: Colors.white,
-                                ),
-                                label: const Text(
-                                  'Choose File',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: primaryColor),
-                              ),
-                            ],
-                          ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Product brochure',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 12),
+                            _buildUploadButton(
+                                Icons.attach_file, 'Choose File'),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
 
-                  // ==========================================
-                  // PRICING & SUBSCRIPTION SECTION
-                  // ==========================================
+                  // ── Pricing Section ───────────────────────────────
                   _buildSectionHeader('Pricing & Subscription'),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
                   CheckboxListTile(
                     title: const Text('Is Subscription Product'),
@@ -311,77 +240,83 @@ class _AddProductPageState extends State<AddProductPage> {
                     onChanged: (v) =>
                         setState(() => _isSubscription = v ?? false),
                     activeColor: primaryColor,
-                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
                   ),
                   if (_isSubscription) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
                     _buildDropdown(
-                        'Subscription Interval',
-                        _subscriptionInterval,
-                        ['Monthly', 'Quarterly', 'Yearly'],
-                        (v) => _subscriptionInterval = v),
+                      'Subscription Interval',
+                      _subscriptionInterval,
+                      ['Monthly', 'Quarterly', 'Yearly'],
+                      (v) => setState(() => _subscriptionInterval = v),
+                    ),
                   ],
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
 
                   Row(
                     children: [
                       Expanded(
                           child: _buildDropdown('Tax Category', null,
                               ['None', 'VAT 13%'], (v) {})),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 16),
                       Expanded(
-                          child: _buildDropdown(
-                              'Selling Price Tax Type*',
-                              _sellingTaxType,
-                              ['Exclusive', 'Inclusive'],
-                              (v) => _sellingTaxType = v,
-                              isRequired: true)),
+                        child: _buildDropdown(
+                          'Selling Price Tax Type*',
+                          _sellingTaxType,
+                          ['Exclusive', 'Inclusive'],
+                          (v) => setState(() => _sellingTaxType = v),
+                          isRequired: true,
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 16),
-
-                  _buildDropdown('Product Type*', _productType,
-                      ['Single', 'Variant'], (v) => _productType = v,
-                      isRequired: true),
                   const SizedBox(height: 24),
 
-                  // Pricing Table
+                  _buildDropdown(
+                      'Product Type*',
+                      _productType,
+                      ['Single', 'Variant'],
+                      (v) => setState(() => _productType = v),
+                      isRequired: true),
+                  const SizedBox(height: 32),
+
+                  // Pricing Table ───────────────────────────────
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: Column(
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 16),
-                          color: primaryColor.withOpacity(0.1),
+                              vertical: 16, horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: primaryColor.withOpacity(0.08),
+                            borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(15)),
+                          ),
                           child: const Row(
                             children: [
                               Expanded(
                                   flex: 2,
                                   child: Text('Cost Price',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.w600))),
                               Expanded(
-                                  child: Text('Margin(%)',
+                                  child: Text('Margin (%)',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.w600))),
                               Expanded(
                                   flex: 2,
-                                  child: Text('Sale Price',
+                                  child: Text('Sale Price (Exc. Tax)',
                                       style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
-                              Expanded(
-                                  child: Text('Product image',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold))),
+                                          fontWeight: FontWeight.w600))),
                             ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(16),
+                          padding: const EdgeInsets.all(20),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -390,46 +325,29 @@ class _AddProductPageState extends State<AddProductPage> {
                                 child: Column(
                                   children: [
                                     _buildTextField(
-                                        'Exc.*', _costExcTaxController,
+                                        'Exc. Tax*', _costExcTaxController,
                                         keyboardType: TextInputType.number,
                                         isRequired: true),
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 16),
                                     _buildTextField(
-                                        'Inc. tax*', _costIncTaxController,
+                                        'Inc. Tax*', _costIncTaxController,
                                         keyboardType: TextInputType.number,
                                         isRequired: true),
                                   ],
                                 ),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: 16),
                               Expanded(
-                                  child: _buildTextField(
-                                      'Margin(%)', _marginController,
-                                      keyboardType: TextInputType.number)),
-                              const SizedBox(width: 12),
+                                child: _buildTextField(
+                                    'Margin (%)', _marginController,
+                                    keyboardType: TextInputType.number),
+                              ),
+                              const SizedBox(width: 16),
                               Expanded(
-                                  child: _buildTextField(
-                                      'Exc. Tax', _saleExcTaxController,
-                                      keyboardType: TextInputType.number)),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: ElevatedButton.icon(
-                                  onPressed: () {}, // TODO: image picker
-                                  icon: const Icon(
-                                    Icons.image,
-                                    size: 18,
-                                    color: Colors.white,
-                                  ),
-                                  label: const Text(
-                                    'Choose',
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: primaryColor,
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12)),
-                                ),
+                                flex: 2,
+                                child: _buildTextField(
+                                    'Exc. Tax', _saleExcTaxController,
+                                    keyboardType: TextInputType.number),
                               ),
                             ],
                           ),
@@ -437,51 +355,33 @@ class _AddProductPageState extends State<AddProductPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 40),
 
-                  // Action Buttons
+                  // ── Action Buttons ───────────────────────────────
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: const Center(
-                            child: const Text('Save & Add\nOpening Stock',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 14)),
-                          ),
+                        child: _buildActionButton(
+                          'Save & Add\nOpening Stock',
+                          primaryColor.withOpacity(0.9),
+                          () {},
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {}, // TODO: Save & add another
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor.withOpacity(0.9),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: const Center(
-                            child: Text('Save & Add\nAnother',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 14)),
-                          ),
+                        child: _buildActionButton(
+                          'Save & Add\nAnother',
+                          primaryColor.withOpacity(0.75),
+                          () {},
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
+                        child: _buildActionButton(
+                          'Save',
+                          greenColor,
+                          () {
                             if (_formKey.currentState!.validate()) {
-                              // TODO: Final save
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
@@ -489,22 +389,12 @@ class _AddProductPageState extends State<AddProductPage> {
                               );
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: greenColor,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                          child: const Text('Save',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold)),
+                          isPrimary: true,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -517,28 +407,33 @@ class _AddProductPageState extends State<AddProductPage> {
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: const Color(0xFF312C51)),
+      style: TextStyle(
+        fontSize: 21,
+        fontWeight: FontWeight.w700,
+        color: primaryColor,
+      ),
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      {bool isRequired = false,
-      TextInputType keyboardType = TextInputType.text,
-      int maxLines = 1}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool isRequired = false,
+    TextInputType keyboardType = TextInputType.text,
+    int maxLines = 1,
+  }) {
     return TextFormField(
       controller: controller,
-      maxLines: maxLines,
       keyboardType: keyboardType,
+      maxLines: maxLines,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        labelStyle: const TextStyle(fontSize: 15),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.grey.shade50,
       ),
       validator: isRequired
           ? (v) => v!.trim().isEmpty ? '$label is required' : null
@@ -546,9 +441,13 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  Widget _buildDropdown(String label, String? value, List<String> items,
-      ValueChanged<String?> onChanged,
-      {bool isRequired = false}) {
+  Widget _buildDropdown(
+    String label,
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged, {
+    bool isRequired = false,
+  }) {
     return DropdownButtonFormField<String>(
       value: value,
       items:
@@ -556,38 +455,80 @@ class _AddProductPageState extends State<AddProductPage> {
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 13, vertical: 12),
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Colors.grey.shade50,
       ),
       validator:
           isRequired ? (v) => v == null ? '$label is required' : null : null,
     );
   }
 
-  Widget _buildDropdownWithAdd(String label, String? value, List<String> items,
-      ValueChanged<String?> onChanged,
-      {bool isRequired = false}) {
+  Widget _buildDropdownWithAdd(
+    String label,
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged, {
+    bool isRequired = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(label,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
             IconButton(
-              icon: const Icon(
-                Icons.add_circle,
-                color: Color(0xFF312C51),
-              ),
-              onPressed: () {}, // TODO: Add new item logic
+              icon: const Icon(Icons.add_circle, color: Color(0xFF312C51)),
+              constraints: const BoxConstraints(),
+              padding: EdgeInsets.zero,
+              onPressed: () {}, // TODO
             ),
           ],
         ),
+        const SizedBox(height: 8),
         _buildDropdown('', value, items, onChanged, isRequired: isRequired),
       ],
+    );
+  }
+
+  Widget _buildUploadButton(IconData icon, String text) {
+    return ElevatedButton.icon(
+      onPressed: () {},
+      icon: Icon(icon, size: 20, color: Colors.white),
+      label: Text(text, style: const TextStyle(color: Colors.white)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryColor,
+        minimumSize: const Size(double.infinity, 48),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String text, Color color, VoidCallback onPressed,
+      {bool isPrimary = false}) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        elevation: isPrimary ? 3 : 1,
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: isPrimary ? 16 : 14,
+          fontWeight: isPrimary ? FontWeight.bold : FontWeight.w600,
+          height: 1.3,
+        ),
+      ),
     );
   }
 
