@@ -30,16 +30,14 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
   double tdsAmount = 0.0;
 
   final List<Map<String, dynamic>> cartProducts = [];
+
   final primaryColor = const Color(0xFF312C51);
+  final greenColor = Colors.green.shade700;
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 400;
-
-    final double padding = isSmallScreen ? 12.0 : 16.0;
-    final double spacing = isSmallScreen ? 12.0 : 16.0;
-    final double fontSize = isSmallScreen ? 14.0 : 16.0;
+    final width = MediaQuery.of(context).size.width;
+    final horizontalPadding = width < 380 ? 16.0 : 20.0;
 
     return Scaffold(
       backgroundColor: primaryColor,
@@ -50,491 +48,296 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Add Purchase',
-          style: TextStyle(
-              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        title: const Row(
+          children: [
+            Text(
+              'Add Purchase',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         centerTitle: true,
-        actions: const [SizedBox(width: 56)],
       ),
       body: SafeArea(
         child: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(40),
-              topRight: Radius.circular(40),
-            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black12, blurRadius: 20, offset: Offset(0, -5)),
+                  color: Colors.black12, blurRadius: 16, offset: Offset(0, -6))
             ],
           ),
           child: SingleChildScrollView(
-            padding: EdgeInsets.all(padding),
+            padding: EdgeInsets.fromLTRB(
+                horizontalPadding, 20, horizontalPadding, 36),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: EdgeInsets.all(padding),
-                    child: Column(
+                // ── Supplier & Basic Info ───────────────────────────────
+                _buildCardSection(
+                  children: [
+                    _buildResponsiveRow([
+                      _buildDropdown(
+                          'Supplier*',
+                          selectedSupplier,
+                          [
+                            'Please Select',
+                            'Vianet Communication Ltd.',
+                            'Technovate Intl.',
+                            'Escanc Nepal'
+                          ],
+                          (v) => setState(() => selectedSupplier = v)),
+                      _buildTextField('Bill No*', _billNoController,
+                          hint: 'Bill number'),
+                    ]),
+                    const SizedBox(height: 18),
+                    _buildResponsiveRow([
+                      _buildDatePicker('Purchase Date*', purchaseDate,
+                          (d) => setState(() => purchaseDate = d)),
+                      _buildTextField('Purchase Date (BS)*', null,
+                          hint: purchaseDateBS, readOnly: true),
+                    ]),
+                    const SizedBox(height: 18),
+                    _buildResponsiveRow([
+                      _buildDropdown(
+                          'Purchase Status*',
+                          selectedPurchaseStatus,
+                          ['Please Select', 'Received', 'Pending', 'Ordered'],
+                          (v) => setState(() => selectedPurchaseStatus = v)),
+                      _buildDropdown(
+                          'Business Location*',
+                          selectedBusinessLocation,
+                          ['Beyond Tech Nepal Pvt. Ltd. (BL0001)', 'Branch 2'],
+                          (v) => setState(() => selectedBusinessLocation = v)),
+                    ], wrapLongText: true),
+                    const SizedBox(height: 18),
+                    _buildResponsiveRow([
+                      _buildDropdown(
+                          'Pay term',
+                          selectedPayTerm,
+                          ['Please Select', 'Cash', 'Credit 30 days'],
+                          (v) => setState(() => selectedPayTerm = v)),
+                      _buildTextField('Address', _addressController,
+                          hint: 'Supplier address'),
+                    ]),
+                    const SizedBox(height: 24),
+                    _buildFileUploadSection(),
+                  ],
+                ),
+
+                const SizedBox(height: 28),
+
+                // ── Products Section ───────────────────────────────
+                _buildCardSection(
+                  children: [
+                    Row(
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildDropdown(
-                                'Supplier*',
-                                selectedSupplier,
-                                [
-                                  'Please Select',
-                                  'Vianet Communication Ltd.',
-                                  'Technovate Intl.',
-                                  'Escanc Nepal'
-                                ],
-                                (val) => setState(() => selectedSupplier = val),
-                              ),
-                            ),
-                            SizedBox(width: spacing),
-                            Expanded(
-                              child: _buildTextField(
-                                'Bill No:*',
-                                _billNoController,
-                                'Bill No',
-                              ),
-                            ),
-                          ],
+                        OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.upload_file, size: 18),
+                          label: const Text('Import'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.red,
+                            side: const BorderSide(color: Colors.red),
+                          ),
                         ),
-                        SizedBox(height: spacing),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildDatePicker(
-                                  'Purchase Date:*',
-                                  purchaseDate,
-                                  (date) => setState(() => purchaseDate = date),
-                                  fontSize),
-                            ),
-                            SizedBox(width: spacing),
-                            Expanded(
-                              child: _buildTextField(
-                                  'Purchase Date BS:*',
-                                  TextEditingController(text: purchaseDateBS),
-                                  '2082-11-04',
-                                  readOnly: true),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spacing),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildDropdown(
-                                'Purchase Status:*',
-                                selectedPurchaseStatus,
-                                [
-                                  'Please Select',
-                                  'Received',
-                                  'Pending',
-                                  'Ordered'
-                                ],
-                                (val) => setState(
-                                    () => selectedPurchaseStatus = val),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: TextField(
+                            controller: _searchProductController,
+                            decoration: InputDecoration(
+                              hintText: 'Search product / SKU / barcode',
+                              prefixIcon: const Icon(Icons.search, size: 22),
+                              suffixIcon: IconButton(
+                                icon:
+                                    Icon(Icons.add_circle, color: primaryColor),
+                                onPressed: () {},
                               ),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 13),
+                              filled: true,
+                              fillColor: Colors.white, // ← changed to white
                             ),
-                            SizedBox(width: spacing),
-                            Expanded(
-                              child: _buildDropdown(
-                                'Business Location:*',
-                                selectedBusinessLocation,
-                                [
-                                  'Beyond Tech Nepal Pvt. Ltd. (BL0001)',
-                                  'Branch 2'
-                                ],
-                                (val) => setState(
-                                    () => selectedBusinessLocation = val),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spacing),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildDropdown(
-                                'Pay term:',
-                                selectedPayTerm,
-                                ['Please Select', 'Cash', 'Credit 30 days'],
-                                (val) => setState(() => selectedPayTerm = val),
-                                fontSize: fontSize,
-                              ),
-                            ),
-                            SizedBox(width: spacing),
-                            Expanded(
-                              child: _buildTextField(
-                                'Address:',
-                                _addressController,
-                                'Address',
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spacing),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Attach Document:',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: fontSize)),
-                            const SizedBox(height: 8),
-                            ElevatedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.attach_file,
-                                  color: Colors.white),
-                              label: const Text('Browse',
-                                  style: TextStyle(color: Colors.white)),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: primaryColor),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Max File size: 5MB\nAllowed File: .pdf, .csv, .zip, .doc, .docx, .jpeg, .jpg, .png',
-                              style: TextStyle(
-                                  fontSize: fontSize - 2, color: Colors.grey),
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-                SizedBox(height: spacing),
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: EdgeInsets.all(padding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.upload_file),
-                              label: const Text('Import Products'),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white),
-                            ),
-                            SizedBox(width: spacing),
-                            Expanded(
-                              child: TextField(
-                                controller: _searchProductController,
-                                decoration: InputDecoration(
-                                  hintText:
-                                      'Enter Product name / SKU / Scan bar code',
-                                  prefixIcon: const Icon(Icons.search),
-                                  suffixIcon: IconButton(
-                                    icon: const Icon(Icons.add_circle,
-                                        color: Colors.blue),
-                                    onPressed: () {},
-                                  ),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 10),
+                    const SizedBox(height: 20),
+
+                    // Horizontal Scrollable Table
+                    SizedBox(
+                      height: 380,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SizedBox(
+                          width: 880,
+                          child: Column(
+                            children: [
+                              // Header
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 10),
+                                decoration: BoxDecoration(
+                                  color: greenColor,
+                                  borderRadius: const BorderRadius.vertical(
+                                      top: Radius.circular(10)),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    SizedBox(
+                                        width: 36,
+                                        child: Text('#',
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(
+                                        width: 180,
+                                        child: Text('Product',
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(
+                                        width: 60,
+                                        child: Text('Qty',
+                                            textAlign: TextAlign.center,
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(
+                                        width: 90,
+                                        child: Text('Rate',
+                                            textAlign: TextAlign.right,
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(
+                                        width: 80,
+                                        child: Text('Disc',
+                                            textAlign: TextAlign.right,
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(
+                                        width: 70,
+                                        child: Text('Tax',
+                                            textAlign: TextAlign.right,
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(
+                                        width: 110,
+                                        child: Text('Amount',
+                                            textAlign: TextAlign.right,
+                                            style: _tableHeaderStyle)),
+                                    SizedBox(width: 44),
+                                  ],
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spacing),
-                        Container(
-                          color: Colors.green.shade700,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 12),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                  width: 30,
-                                  child: Text('#',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
+
+                              // Rows
                               Expanded(
-                                  flex: 4,
-                                  child: Text('Product Name',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
-                              Expanded(
-                                  flex: 1,
-                                  child: Text('Qty',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
-                              Expanded(
-                                  flex: 2,
-                                  child: Text('Rate',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
-                              Expanded(
-                                  flex: 2,
-                                  child: Text('Discount',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
-                              Expanded(
-                                  flex: 2,
-                                  child: Text('Tax',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
-                              Expanded(
-                                  flex: 2,
-                                  child: Text('Amount',
-                                      textAlign: TextAlign.right,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: fontSize - 2))),
-                              const SizedBox(width: 30),
+                                child: cartProducts.isEmpty
+                                    ? Center(
+                                        child: Text(
+                                          'No products added yet',
+                                          style: TextStyle(
+                                              color: Colors.grey[700],
+                                              fontSize: 15),
+                                        ),
+                                      )
+                                    : ListView.builder(
+                                        physics: const ClampingScrollPhysics(),
+                                        itemCount: cartProducts.length,
+                                        itemBuilder: (context, i) =>
+                                            _buildCartRow(i, cartProducts[i]),
+                                      ),
+                              ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.35,
-                          child: cartProducts.isEmpty
-                              ? Center(
-                                  child: Text('No products added yet',
-                                      style: TextStyle(
-                                          color: Colors.grey.shade600,
-                                          fontSize: fontSize - 2)))
-                              : ListView.builder(
-                                  itemCount: cartProducts.length,
-                                  itemBuilder: (context, index) {
-                                    final item = cartProducts[index];
-                                    return Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 12),
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
-                                                  color:
-                                                      Colors.grey.shade300))),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                              width: 30,
-                                              child: Text('${index + 1}',
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          Expanded(
-                                              flex: 4,
-                                              child: Text(
-                                                  item['name'] ?? 'Product',
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          Expanded(
-                                              flex: 1,
-                                              child: TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                  textAlign: TextAlign.center,
-                                                  controller:
-                                                      TextEditingController(
-                                                          text: '1'),
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          Expanded(
-                                              flex: 2,
-                                              child: TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                  textAlign: TextAlign.right,
-                                                  controller:
-                                                      TextEditingController(
-                                                          text: '0.00'),
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          Expanded(
-                                              flex: 2,
-                                              child: TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          Expanded(
-                                              flex: 2,
-                                              child: TextField(
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          border:
-                                                              InputBorder.none),
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          Expanded(
-                                              flex: 2,
-                                              child: Text('Rs. 0.00',
-                                                  textAlign: TextAlign.right,
-                                                  style: TextStyle(
-                                                      fontSize: fontSize - 2))),
-                                          IconButton(
-                                              icon: const Icon(
-                                                  Icons.delete_outline,
-                                                  color: Colors.red,
-                                                  size: 20),
-                                              onPressed: () {}),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                        ),
-                        SizedBox(height: spacing),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                    'Subtotal: Rs ${subTotal.toStringAsFixed(2)}',
-                                    style: TextStyle(fontSize: fontSize)),
-                                Text(
-                                    'Non-Taxable Amount: Rs ${nonTaxableAmount.toStringAsFixed(2)}',
-                                    style: TextStyle(fontSize: fontSize - 2)),
-                                Text(
-                                    'Taxable Amount: Rs ${taxableAmount.toStringAsFixed(2)}',
-                                    style: TextStyle(fontSize: fontSize - 2)),
-                                Text('VAT: Rs ${taxAmount.toStringAsFixed(2)}',
-                                    style: TextStyle(fontSize: fontSize - 2)),
-                                Text(
-                                    'Grand Total: Rs ${grandTotal.toStringAsFixed(2)}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: fontSize + 2,
-                                        color: primaryColor)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 20),
+
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          _buildTotalLine('Subtotal', subTotal, bold: true),
+                          _buildTotalLine('Non-Taxable', nonTaxableAmount,
+                              small: true),
+                          _buildTotalLine('Taxable', taxableAmount,
+                              small: true),
+                          _buildTotalLine('VAT', taxAmount, small: true),
+                          const Divider(height: 24),
+                          _buildTotalLine('Grand Total', grandTotal,
+                              bold: true, large: true, color: primaryColor),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                SizedBox(height: spacing),
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: EdgeInsets.all(padding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Shipping Details:',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: fontSize + 2)),
-                        SizedBox(height: spacing),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildTextField(
-                                'Additional Shipping charges:',
-                                TextEditingController(
-                                    text:
-                                        additionalShipping.toStringAsFixed(0)),
-                                '0',
-                                keyboardType: TextInputType.number,
-                              ),
-                            ),
-                            SizedBox(width: spacing),
-                            Expanded(
-                              child: _buildDropdown(
-                                'TDS Type:',
-                                selectedTdsType,
-                                ['Please Select', 'TDS 1.5%', 'TDS 15%'],
-                                (val) => setState(() => selectedTdsType = val),
-                                fontSize: fontSize,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: spacing),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildTextField(
-                                'TDS Amount:',
-                                TextEditingController(
-                                    text: tdsAmount.toStringAsFixed(2)),
-                                '0.00',
-                                keyboardType: TextInputType.number,
-                              ),
-                            ),
-                            const Spacer(),
-                            ElevatedButton.icon(
-                              onPressed: () {},
-                              icon: const Icon(Icons.add, size: 18),
-                              label: const Text('Add additional expenses'),
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: spacing * 2),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Purchase Saved!')));
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      padding: EdgeInsets.symmetric(
-                          horizontal: screenWidth * 0.35, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    ),
-                    child: Text('Save Purchase',
+
+                const SizedBox(height: 32),
+
+                // ── Shipping & TDS ───────────────────────────────
+                _buildCardSection(
+                  children: [
+                    const Text('Shipping & Additional Charges',
                         style: TextStyle(
-                            fontSize: fontSize + 2, color: Colors.white)),
+                            fontSize: 17, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 20),
+                    _buildResponsiveRow([
+                      _buildTextField('Additional Shipping', null,
+                          hint: additionalShipping.toStringAsFixed(0),
+                          keyboardType: TextInputType.number),
+                      _buildDropdown(
+                          'TDS Type',
+                          selectedTdsType,
+                          ['Please Select', 'TDS 1.5%', 'TDS 15%'],
+                          (v) => setState(() => selectedTdsType = v)),
+                    ]),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField('TDS Amount', null,
+                              hint: tdsAmount.toStringAsFixed(2),
+                              keyboardType: TextInputType.number),
+                        ),
+                        const SizedBox(width: 12),
+                        OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: const Icon(Icons.add, size: 18),
+                          label: const Text('Add expense'),
+                          style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 44),
+
+                FilledButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Purchase Saved!')),
+                    );
+                  },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14)),
+                  ),
+                  child: const Text(
+                    'Save Purchase',
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
-                SizedBox(height: spacing * 3),
+
+                const SizedBox(height: 36),
               ],
             ),
           ),
@@ -543,32 +346,54 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
     );
   }
 
+  Widget _buildCardSection({required List<Widget> children}) {
+    return Card(
+      elevation: 1.5,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start, children: children),
+      ),
+    );
+  }
+
+  Widget _buildResponsiveRow(List<Widget> children,
+      {bool wrapLongText = false}) {
+    return Wrap(
+      spacing: 14,
+      runSpacing: 18,
+      children: children.map((child) {
+        return wrapLongText ? Flexible(child: child) : Expanded(child: child);
+      }).toList(),
+    );
+  }
+
   Widget _buildTextField(
     String label,
-    TextEditingController controller,
-    String hint, {
+    TextEditingController? controller, {
+    String? hint,
     TextInputType keyboardType = TextInputType.text,
     bool readOnly = false,
-    double fontSize = 16.0,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize)),
-        const SizedBox(height: 6),
+            style:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+        const SizedBox(height: 7),
         TextField(
           controller: controller,
-          keyboardType: keyboardType,
           readOnly: readOnly,
-          style: TextStyle(fontSize: fontSize - 1),
+          keyboardType: keyboardType,
           decoration: InputDecoration(
             hintText: hint,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: Colors.white, // ← white background
           ),
         ),
       ],
@@ -579,73 +404,218 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
     String label,
     String? value,
     List<String> items,
-    ValueChanged<String?> onChanged, {
-    bool isRequired = false,
-    double fontSize = 16.0,
-  }) {
+    ValueChanged<String?> onChanged,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize)),
-        SizedBox(height: 6),
+            style:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+        const SizedBox(height: 7),
         DropdownButtonFormField<String>(
           value: value,
+          isExpanded: true,
           items: items
               .map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e, style: TextStyle(fontSize: fontSize - 1))))
+                    value: e,
+                    child:
+                        Text(e, overflow: TextOverflow.ellipsis, maxLines: 1),
+                  ))
               .toList(),
           onChanged: onChanged,
           decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             filled: true,
-            fillColor: Colors.grey.shade50,
+            fillColor: Colors.white, // ← white background
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDatePicker(String label, DateTime initialDate,
-      ValueChanged<DateTime> onDateSelected, double fontSize) {
+  Widget _buildDatePicker(
+    String label,
+    DateTime initial,
+    ValueChanged<DateTime> onSelect,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize)),
-        SizedBox(height: 6),
+            style:
+                const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+        const SizedBox(height: 7),
         InkWell(
           onTap: () async {
             final picked = await showDatePicker(
               context: context,
-              initialDate: initialDate,
+              initialDate: initial,
               firstDate: DateTime(2000),
               lastDate: DateTime(2100),
             );
-            if (picked != null) {
-              onDateSelected(picked);
-            }
+            if (picked != null) onSelect(picked);
           },
           child: InputDecorator(
             decoration: InputDecoration(
               border:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
               contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               filled: true,
-              fillColor: Colors.grey.shade50,
+              fillColor: Colors.white, // ← white background
             ),
             child: Text(
-              '${initialDate.day}-${initialDate.month}-${initialDate.year}',
-              style: TextStyle(fontSize: fontSize - 1),
+              '${initial.day}-${initial.month}-${initial.year}',
+              style: const TextStyle(fontSize: 14.5),
             ),
           ),
         ),
       ],
     );
   }
+
+  Widget _buildFileUploadSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Attach Document',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5)),
+        const SizedBox(height: 10),
+        ElevatedButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.attach_file, color: Colors.white, size: 20),
+          label: const Text(
+            'Browse File',
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: primaryColor,
+            minimumSize: const Size(double.infinity, 46),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Max 5MB  •  pdf, csv, zip, doc, jpeg, png',
+          style: TextStyle(fontSize: 12.5, color: Colors.grey[700]),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCartRow(int index, Map<String, dynamic> item) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+              width: 36,
+              child:
+                  Text('${index + 1}', style: const TextStyle(fontSize: 13.5))),
+          SizedBox(
+            width: 180,
+            child: Text(
+              item['name'] ?? 'Unknown Product',
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+              style: const TextStyle(fontSize: 13.5),
+            ),
+          ),
+          SizedBox(
+            width: 60,
+            child: TextField(
+              textAlign: TextAlign.center,
+              decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero),
+              style: const TextStyle(fontSize: 13.5),
+            ),
+          ),
+          SizedBox(
+            width: 90,
+            child: TextField(
+              textAlign: TextAlign.right,
+              decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding: EdgeInsets.zero),
+              style: const TextStyle(fontSize: 13.5),
+            ),
+          ),
+          SizedBox(width: 80, child: _dummyEditableCell()),
+          SizedBox(width: 70, child: _dummyEditableCell()),
+          SizedBox(
+            width: 110,
+            child: Text('Rs. 0.00',
+                textAlign: TextAlign.right,
+                style: const TextStyle(fontSize: 13.5)),
+          ),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+            onPressed: () {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _dummyEditableCell() => TextField(
+        textAlign: TextAlign.right,
+        decoration: const InputDecoration(
+            border: InputBorder.none,
+            isDense: true,
+            contentPadding: EdgeInsets.zero),
+        style: const TextStyle(fontSize: 13.5),
+      );
+
+  Widget _buildTotalLine(
+    String label,
+    double value, {
+    bool bold = false,
+    bool small = false,
+    bool large = false,
+    Color? color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+                fontSize: small ? 13 : 14.5,
+                fontWeight: bold ? FontWeight.w600 : FontWeight.normal),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Rs ${value.toStringAsFixed(2)}',
+            style: TextStyle(
+              fontSize: large ? 17 : 14.5,
+              fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+              color: color ?? Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static const _tableHeaderStyle = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.w600,
+    fontSize: 13,
+  );
 
   @override
   void dispose() {
