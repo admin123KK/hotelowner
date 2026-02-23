@@ -73,10 +73,16 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Purchases',
-          style: TextStyle(
-              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        title: const Row(
+          children: [
+            Text(
+              'Purchases',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         centerTitle: true,
         actions: const [SizedBox(width: 56)],
