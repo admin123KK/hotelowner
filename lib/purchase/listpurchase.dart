@@ -126,6 +126,7 @@ class _PurchaseListPageState extends State<PurchaseListPage> {
                   itemBuilder: (context, index) {
                     final p = purchases[index];
                     return Card(
+                      color: Colors.white,
                       elevation: 2,
                       margin: const EdgeInsets.only(bottom: 12),
                       shape: RoundedRectangleBorder(

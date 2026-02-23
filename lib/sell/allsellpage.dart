@@ -122,6 +122,7 @@ class _SellListPageState extends State<SellListPage> {
                     final isPaid = sale['paymentStatus'] == 'Paid';
 
                     return Card(
+                      color: Colors.white,
                       margin: const EdgeInsets.only(bottom: 12),
                       elevation: 1.5,
                       shape: RoundedRectangleBorder(

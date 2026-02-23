@@ -1,7 +1,3 @@
-// ────────────────────────────────────────────────
-//  Improved spacing & layout version
-// ────────────────────────────────────────────────
-
 import 'package:flutter/material.dart';
 
 class AddProductPage extends StatefulWidget {

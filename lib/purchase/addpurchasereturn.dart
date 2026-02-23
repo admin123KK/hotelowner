@@ -348,7 +348,8 @@ class _AddPurchasePageState extends State<AddPurchasePage> {
 
   Widget _buildCardSection({required List<Widget> children}) {
     return Card(
-      elevation: 1.5,
+      color: Colors.white,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       child: Padding(
         padding: const EdgeInsets.all(18),

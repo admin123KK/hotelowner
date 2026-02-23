@@ -11,7 +11,6 @@ class _ProductListPageState extends State<ProductListPage> {
   final primaryColor = const Color(0xFF312C51);
   final accentColor = const Color(0xFFF5E6D3);
 
-  // Dummy data
   final List<Map<String, dynamic>> products = [
     {
       'image': 'https://via.placeholder.com/80?text=HDD',
@@ -113,15 +112,14 @@ class _ProductListPageState extends State<ProductListPage> {
                     final lowStock = stockQty > 0 && stockQty <= 5;
 
                     return Card(
+                      color: Colors.white,
                       margin: const EdgeInsets.only(bottom: 10),
                       elevation: 1,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16)),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(16),
-                        onTap: () {
-                          // TODO: open product detail
-                        },
+                        onTap: () {},
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Row(
