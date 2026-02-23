@@ -11,7 +11,6 @@ class _PosPageState extends State<PosPage> {
   // Cart items
   final List<Map<String, dynamic>> _cart = [];
 
-  // Summary values
   double itemsCount = 0.0;
   double subTotal = 0.0;
   double nonTaxableAmount = 0.0;
