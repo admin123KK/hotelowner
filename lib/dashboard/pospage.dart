@@ -179,10 +179,16 @@ class _PosPageState extends State<PosPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'POS - Point of Sale',
-          style: TextStyle(
-              color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
+        title: const Row(
+          children: [
+            Text(
+              'POS - Point of Sale',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
         centerTitle: true,
         actions: [
